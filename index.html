@@ -3,481 +3,2065 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Bazy Kaskadowej dla Cukrzyków</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Expert Kalkulator Bazy Kaskadowej v4 - Button</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
-        .glow-effect {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        /* --- CSS --- */
+        /* --- Global Styles & Variables --- */
+        :root {
+            --primary-color: #10B981; /* Teal 500 */
+            --primary-color-dark: #059669; /* Teal 600 */
+            --light-bg: #f7f8fc; /* Grey 100 */
+            --card-bg: #ffffff; /* White */
+            --text-color: #374151; /* Grey 700 */
+            --text-color-light: #6B7280; /* Grey 500 */
+            --border-color: #e5e7eb; /* Grey 200 */
+            --danger-color: #EF4444; /* Red 500 */
+            --danger-border: #FCA5A5; /* Red 300 */
+            --danger-bg: #FEF2F2; /* Red 50 */
+            --danger-color-text: #B91C1C; /* Red 700 */
+            --warning-color-text: #A16207; /* Amber 800 */
+            --warning-color-bg: #FEFCE8; /* Yellow 50 */
+            --warning-color-border: #FDE047; /* Yellow 400 */
+            --info-color-text: #1E40AF; /* Blue 800 */
+            --info-color-bg: #EFF6FF; /* Blue 50 */
+            --info-color-border: #DBEAFE; /* Blue 200 */
+            --border-radius: 0.5rem; /* 8px */
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+            --transition-speed: 0.2s;
         }
-        .input-highlight {
-            transition: all 0.3s ease;
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --dark-bg: #1f2937; /* Grey 800 */
+            --dark-card-bg: #374151; /* Grey 700 */
+            --dark-text-color: #f3f4f6; /* Grey 50 */
+            --dark-text-color-light: #9ca3af; /* Grey 400 */
+            --dark-border-color: #4b5563; /* Grey 600 */
+            --dark-info-bg: #1f2937; /* Grey 800 */
+            --dark-info-border: #374151; /* Grey 700 */
+            --dark-info-text: #bfdbfe; /* Blue 200 */
+            --dark-danger-bg: #450a0a; /* Red 950 */
+            --dark-danger-border: #7f1d1d; /* Red 900 */
+            --dark-danger-text: #fecaca; /* Red 200 */
+            --dark-warning-bg: #422006; /* Amber 950 */
+            --dark-warning-border: #78350f; /* Amber 900 */
+            --dark-warning-text: #fef08a; /* Yellow 200 */
+
+            background-color: var(--dark-bg);
+            color: var(--dark-text-color);
+            --card-bg: var(--dark-card-bg);
+            --text-color: var(--dark-text-color);
+            --text-color-light: var(--dark-text-color-light);
+            --border-color: var(--dark-border-color);
+            --info-color-bg: var(--dark-info-bg);
+            --info-color-border: var(--dark-info-border);
+            --info-color-text: var(--dark-info-text);
+            --danger-bg: var(--dark-danger-bg);
+            --danger-border: var(--dark-danger-border);
+            --danger-color-text: var(--dark-danger-text);
+            --warning-color-bg: var(--dark-warning-bg);
+            --warning-color-border: var(--dark-warning-border);
+            --warning-color-text: var(--dark-warning-text);
         }
-        .input-highlight:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-        .result-card {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-left: 4px solid #3b82f6;
+
+        html {
+            scroll-behavior: smooth;
         }
-        .animate-pulse {
-            animation: pulse 2s infinite;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
         }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
         }
-        .hourly-rate {
-            transition: all 0.3s ease;
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 2rem 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            transition: background-color var(--transition-speed) ease;
         }
-        .hourly-rate:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        h1, h2 {
+            color: var(--text-color);
+            text-align: center;
+            font-weight: 600;
         }
-        .progress-bar {
-            height: 8px;
-            border-radius: 4px;
-            background-color: #e5e7eb;
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color-dark);
         }
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
-            transition: width 0.5s ease;
+
+        body.dark-mode h1 {
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-color-light);
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            transition: border-color var(--transition-speed) ease;
+        }
+         body.dark-mode h2 {
+             border-bottom-color: var(--dark-border-color);
+         }
+
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            z-index: 10;
+            user-select: none; /* Prevent text selection */
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 24px;
+            position: relative;
+            width: 50px;
+        }
+
+        .theme-switch input {
+            display:none;
+        }
+
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            background-color: #fff;
+            bottom: 3px;
+            content: "";
+            height: 18px;
+            left: 3px;
+            position: absolute;
+            transition: .4s;
+            width: 18px;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .theme-switch-wrapper span {
+            margin-left: 8px;
+            margin-right: 8px; /* Added spacing between labels and switch */
+            font-size: 0.9rem;
+            color: var(--text-color-light);
+             transition: color var(--transition-speed) ease;
+        }
+         body.dark-mode .theme-switch-wrapper span {
+             color: var(--dark-text-color-light);
+         }
+
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem 2rem; /* Row gap, Column gap */
+            }
+            .form-group.full-width {
+                grid-column: 1 / -1; /* Span across all columns */
+            }
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color var(--transition-speed) ease;
+        }
+         body.dark-mode label {
+             color: var(--dark-text-color-light);
+         }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: #f9fafb; /* Grey 50 */
+            color: var(--text-color);
+            transition: border-color var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+
+        body.dark-mode input[type="number"], body.dark-mode select {
+            background-color: var(--dark-border-color); /* Use dark border as background */
+            color: var(--dark-text-color);
+            border-color: var(--dark-border-color);
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); /* Teal 500 with alpha */
+            background-color: var(--card-bg); /* Use card background on focus */
+        }
+
+        body.dark-mode input[type="number"]:focus, body.dark-mode select:focus {
+             background-color: var(--dark-card-bg);
+             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3); /* Slightly stronger shadow in dark mode */
+        }
+
+
+        input.input-error, select.input-error {
+            border-color: var(--danger-color) !important; /* Override focus */
+            background-color: var(--danger-bg);
+            color: var(--danger-color-text);
+        }
+
+        body.dark-mode input.input-error, body.dark-mode select.input-error {
+            background-color: var(--dark-danger-bg);
+            border-color: var(--dark-danger-border) !important;
+            color: var(--dark-danger-text);
+        }
+
+        /* Style for error messages */
+        .error-message {
+            display: block; /* Changed from none to block, content will control visibility */
+            color: var(--danger-color-text);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            min-height: 1.2em; /* Reserve space to prevent layout shifts */
+            transition: color var(--transition-speed) ease;
+        }
+        body.dark-mode .error-message {
+             color: var(--dark-danger-text);
+        }
+
+        /* Hide error message content when not needed */
+        .error-message:empty {
+            display: none;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: var(--text-color-light);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.8rem;
+            text-align: center;
+            line-height: 16px;
+            transition: border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+            flex-shrink: 0; /* Prevent shrinking in flex container */
+        }
+         body.dark-mode .tooltip {
+             color: var(--dark-text-color-light);
+             border-color: var(--dark-border-color);
+         }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 135%; /* Position above the tooltip icon */
+            left: 50%;
+            margin-left: -110px; /* Center the tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: 400;
+            line-height: 1.4;
+            pointer-events: none; /* Allows clicking through the tooltip to elements below */
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext,
+        .tooltip:focus .tooltiptext { /* Add focus state */
+            visibility: visible;
+            opacity: 1;
+        }
+
+         .tooltip:focus-visible { /* Use focus-visible for better accessibility */
+             outline: 2px solid var(--primary-color-dark);
+             outline-offset: 2px;
+             border-color: var(--primary-color-dark);
+         }
+         body.dark-mode .tooltip:focus-visible {
+             outline-color: var(--primary-color);
+              border-color: var(--primary-color);
+         }
+
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start; /* Align items to the start for multi-line labels */
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            flex-wrap: wrap; /* Allow wrapping if label is long */
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            font-weight: 400;
+            cursor: pointer;
+            flex-grow: 1; /* Allow label to take space */
+            line-height: 1.4; /* Improve readability for multi-line labels */
+             transition: color var(--transition-speed) ease;
+        }
+         body.dark-mode .checkbox-group label {
+             color: var(--dark-text-color);
+         }
+
+        .checkbox-group input[type="checkbox"] {
+            /* Reset default appearance if necessary, or style with accent-color */
+             -webkit-appearance: none;
+             -moz-appearance: none;
+             appearance: none;
+            width: 1.1em;
+            height: 1.1em;
+            cursor: pointer;
+            margin-top: 0.1em; /* Adjust alignment */
+            flex-shrink: 0; /* Prevent checkbox shrinking */
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem; /* Slightly rounded corners */
+            position: relative; /* For custom checkmark */
+            transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+            outline: none; /* Hide default outline */
+        }
+         body.dark-mode .checkbox-group input[type="checkbox"] {
+             border-color: var(--dark-border-color);
+             background-color: var(--dark-card-bg);
+         }
+
+         /* Custom checkmark */
+         .checkbox-group input[type="checkbox"]::before {
+             content: '';
+             display: block;
+             position: absolute;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%) scale(0);
+             width: 0.6em;
+             height: 0.6em;
+             background-color: white; /* Checkmark color */
+             border-radius: 2px;
+             transition: transform var(--transition-speed) ease-in-out;
+         }
+
+        .checkbox-group input[type="checkbox"]:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+         .checkbox-group input[type="checkbox"]:checked::before {
+             transform: translate(-50%, -50%) scale(1); /* Show checkmark */
+         }
+
+
+        .checkbox-group input[type="checkbox"].input-error {
+            border-color: var(--danger-color) !important;
+            background-color: var(--danger-bg);
+        }
+         body.dark-mode .checkbox-group input[type="checkbox"].input-error {
+             border-color: var(--dark-danger-border) !important;
+             background-color: var(--dark-danger-bg);
+         }
+
+        .checkbox-group input[type="checkbox"].input-error + label {
+            color: var(--danger-color-text);
+        }
+        body.dark-mode .checkbox-group input[type="checkbox"].input-error + label {
+            color: var(--dark-danger-text);
+        }
+
+        /* Focus state for accessibility */
+        .checkbox-group input[type="checkbox"]:focus-visible {
+            outline: 2px solid var(--primary-color-dark);
+            outline-offset: 2px;
+        }
+         body.dark-mode .checkbox-group input[type="checkbox"]:focus-visible {
+            outline-color: var(--primary-color);
+         }
+
+
+        /* Position checkbox error message below the checkbox+label group */
+        .checkbox-group .error-message {
+            width: 100%; /* Take full width below */
+            position: static; /* Changed from absolute */
+            margin-top: 0.3rem; /* Space above error message */
+            min-height: 1.2em; /* Reserve space */
+        }
+        body.dark-mode .checkbox-group .error-message { color: var(--dark-danger-text); }
+
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        button {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            color: var(--card-bg); /* Button text color */
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: auto; /* Auto width based on content */
+        }
+
+        button.btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-color-dark));
+        }
+
+        button.btn-secondary {
+            background-color: var(--text-color-light);
+            color: var(--card-bg); /* Use card background for text in secondary */
+        }
+        body.dark-mode button.btn-secondary {
+            background-color: var(--dark-border-color);
+            color: var(--dark-text-color); /* Use dark text color for contrast */
+        }
+
+
+        button.btn-danger {
+            background-color: var(--danger-color);
+            color: var(--card-bg); /* Use card background for text */
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+            opacity: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle press effect */
+        }
+
+        button:disabled {
+            background: #ccc !important; /* Override potential gradients */
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+            transform: none;
+        }
+        body.dark-mode button:disabled {
+            background: var(--dark-border-color) !important;
+            opacity: 0.5;
+        }
+
+         button:focus-visible { /* Add focus-visible state */
+             outline: 2px solid var(--primary-color-dark);
+             outline-offset: 2px;
+         }
+         body.dark-mode button:focus-visible {
+             outline-color: var(--primary-color);
+         }
+
+
+        #calculationStatus {
+            font-style: italic;
+            color: var(--text-color-light);
+            text-align: center;
+            height: 1.5em;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            visibility: hidden; /* Use visibility to reserve space */
+            transition: visibility 0s linear 0.3s; /* Delay hiding */
+             min-height: 1.5em; /* Ensure space is always reserved */
+        }
+        #calculationStatus[aria-busy="true"] {
+            visibility: visible;
+            transition-delay: 0s; /* Show immediately */
+        }
+         body.dark-mode #calculationStatus {
+             color: var(--dark-text-color-light);
+         }
+
+
+        #wyniki {
+            display: none; /* Hidden by default */
+            margin-top: 2rem;
+        }
+
+        #infoWiek, #infoTDB, #summaryStats {
+            background-color: var(--info-color-bg);
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--info-color-border);
+            color: var(--info-color-text);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            min-height: 1.6em; /* Reserve space */
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+         body.dark-mode #infoWiek, body.dark-mode #infoTDB, body.dark-mode #summaryStats {
+             background-color: var(--dark-info-bg);
+             border-color: var(--dark-info-border);
+             color: var(--dark-info-text);
+         }
+
+        #summaryStats ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 0 0;
+        }
+
+        #summaryStats li {
+            margin-bottom: 0.25rem;
+        }
+
+        #summaryStats li strong {
+            color: var(--info-color-text); /* Inherit info text color */
+            font-weight: 600;
+        }
+        body.dark-mode #summaryStats li strong {
+             color: var(--dark-info-text);
+        }
+
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            display: none; /* Hidden by default */
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+         body.dark-mode .alert {
+             /* Dark mode alert styles are handled by the variable definitions */
+         }
+
+        .alert-danger {
+            color: var(--danger-color-text);
+            background-color: var(--danger-bg);
+            border-color: var(--danger-border);
+        }
+
+        .alert-warning {
+            color: var(--warning-color-text);
+            background-color: var(--warning-color-bg);
+            border-color: var(--warning-color-border);
+        }
+
+        #chartContainer {
+            margin-top: 2rem;
+            position: relative;
+            min-height: 300px; /* Give chart some minimum height */
+            max-height: 400px; /* Control max height */
+        }
+
+
+        .table-container {
+            overflow-x: auto; /* Allow horizontal scrolling on small screens */
+            margin-top: 1rem;
+        }
+
+        #tabelaBazy {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Ensures border-radius is applied to content */
+            transition: border-color var(--transition-speed) ease;
+        }
+         body.dark-mode #tabelaBazy {
+             border-color: var(--dark-border-color);
+         }
+
+
+        #tabelaBazy th, #tabelaBazy td {
+            padding: 0.8rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+         body.dark-mode #tabelaBazy th, body.dark-mode #tabelaBazy td {
+             border-bottom-color: var(--dark-border-color);
+         }
+
+
+        #tabelaBazy thead th {
+            background-color: var(--light-bg); /* Header background */
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-color-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-top: none;
+            border-bottom-width: 2px; /* Thicker bottom border for header */
+        }
+        body.dark-mode #tabelaBazy thead th {
+             background-color: var(--dark-bg); /* Use dark background for header */
+             color: var(--dark-text-color-light);
+        }
+
+
+        #tabelaBazy tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        #tabelaBazy tbody tr:nth-child(even) {
+            background-color: var(--card-bg); /* White/Card background for even rows */
+        }
+
+        #tabelaBazy tbody tr:nth-child(odd) {
+            background-color: #f9fafb; /* Light grey for odd rows */
+        }
+         body.dark-mode #tabelaBazy tbody tr:nth-child(odd) {
+             background-color: var(--dark-border-color); /* Use dark border color as background for odd rows */
+         }
+
+
+        #tabelaBazy tbody tr:hover {
+            background-color: #f0f9ff; /* Very light blue on hover */
+        }
+         body.dark-mode #tabelaBazy tbody tr:hover {
+             background-color: #4b5563; /* Darker grey on hover */
+         }
+
+
+        #tabelaBazy tfoot th {
+            background-color: var(--light-bg); /* Footer background */
+            font-weight: 600;
+            border-top: 2px solid var(--border-color); /* Thicker top border for footer */
+            color: var(--text-color);
+            padding: 1rem;
+        }
+         body.dark-mode #tabelaBazy tfoot th {
+             background-color: var(--dark-bg); /* Use dark background for footer */
+             color: var(--dark-text-color);
+             border-top-color: var(--dark-border-color);
+         }
+
+
+        #tabelaBazy tfoot th:first-child {
+            text-align: right;
+        }
+
+        #tabelaBazy tfoot th:last-child {
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: auto; /* Pushes footer to the bottom */
+            padding: 1.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-color-light);
+            width: 100%;
+             transition: color var(--transition-speed) ease;
+        }
+         body.dark-mode footer {
+             color: var(--dark-text-color-light);
+         }
+
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black with opacity */
+            animation: fadeIn 0.3s ease;
+             backdrop-filter: blur(5px); /* Optional: blur background */
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 25px 35px;
+            border: 1px solid var(--border-color);
+            width: 80%; /* Could be responsive */
+            max-width: 700px; /* Max width */
+            border-radius: var(--border-radius);
+            position: relative;
+            animation: slideIn 0.3s ease;
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+         body.dark-mode .modal-content {
+             background-color: var(--dark-card-bg);
+             border-color: var(--dark-border-color);
+         }
+
+
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+         body.dark-mode .modal-content h2 {
+             color: var(--dark-text-color);
+         }
+
+        .modal-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+            color: var(--text-color);
+        }
+         body.dark-mode .modal-content h3 {
+             color: var(--dark-text-color);
+             border-bottom-color: var(--dark-border-color);
+         }
+
+
+        .modal-content p, .modal-content ul {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+         body.dark-mode .modal-content p, body.dark-mode .modal-content ul {
+             color: var(--dark-text-color-light); /* Use light text color for paragraph text in modal */
+         }
+
+
+        .modal-content ul {
+            list-style: disc;
+            padding-left: 25px;
+        }
+
+        .modal-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+
+        .close-button {
+            color: var(--text-color-light);
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus { /* Add focus state */
+            color: var(--text-color);
+            text-decoration: none;
+            outline: none; /* Hide default outline */
+        }
+
+         .close-button:focus-visible { /* Use focus-visible for better accessibility */
+             outline: 2px solid var(--primary-color-dark);
+             outline-offset: 2px;
+         }
+          body.dark-mode .close-button:focus-visible {
+             outline-color: var(--primary-color);
+          }
+
+
+        /* Modal Animations */
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes slideIn {
+            from {transform: translateY(-50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        /* --- Responsive Styles --- */
+        @media (max-width: 768px) {
+             .theme-switch-wrapper {
+                 top: 0.5rem;
+                 right: 0.5rem;
+             }
+             #helpButton {
+                 top: 0.5rem;
+                 left: 0.5rem;
+             }
+            .container {
+                max-width: 95%;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+            }
+            .button-container {
+                flex-direction: column; /* Stack buttons on small screens */
+            }
+            button {
+                width: 100%; /* Full width buttons when stacked */
+            }
+            .checkbox-group label {
+                font-size: 0.9rem;
+            }
+            .modal-content {
+                width: 90%;
+                margin: 15% auto;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+             .theme-switch-wrapper {
+                 top: 0.25rem;
+                 right: 0.25rem;
+             }
+            #helpButton {
+                 top: 0.25rem;
+                 left: 0.25rem;
+                 padding: 0.4rem 0.8rem;
+                 font-size: 0.9rem;
+             }
+            .card {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+            h2 {
+                font-size: 1.1rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            input[type="number"], select, button {
+                font-size: 0.95rem;
+            }
+            #tabelaBazy th, #tabelaBazy td {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+            }
+            #tabelaBazy tfoot th {
+                padding: 0.8rem;
+            }
+            .checkbox-group label {
+                font-size: 0.85rem;
+            }
+             .tooltip .tooltiptext {
+                 width: 180px;
+                 margin-left: -90px; /* Recenter */
+             }
+            .modal-content {
+                padding: 15px;
+            }
+            .close-button {
+                top: 10px;
+                right: 15px;
+                font-size: 24px;
+            }
+        }
+
+        /* --- Print Styles --- */
+        @media print {
+             /* Hide elements not needed for print */
+             body {
+                 padding: 0;
+                 margin: 0;
+                 background-color: #fff !important;
+                 -webkit-print-color-adjust: exact !important; /* Forces printing backgrounds and colors */
+                 print-color-adjust: exact !important;
+             }
+             body > .container > .card:not(#wyniki),
+             footer,
+             .print-hide, /* Elements with this class will be hidden */
+             .theme-switch-wrapper,
+             #helpButton,
+             .button-container,
+             #chartContainer,
+             #alertBox {
+                 display: none !important;
+             }
+
+             /* Style the results section for print */
+             #wyniki {
+                 display: block !important;
+                 visibility: visible !important;
+                 position: static !important;
+                 width: 100% !important;
+                 max-width: 100% !important;
+                 margin: 0 !important;
+                 padding: 1.5cm !important; /* Use physical units for print */
+                 box-shadow: none !important;
+                 border: none !important;
+                 background-color: #fff !important;
+                 color: #000 !important;
+             }
+
+             /* Ensure all elements within results are visible and black */
+             #wyniki * {
+                 visibility: visible !important;
+                 background-color: transparent !important;
+                 color: #000 !important;
+                 box-shadow: none !important;
+                 border-color: #ccc !important; /* Light grey borders for tables/info */
+             }
+
+             #wyniki h2 {
+                 text-align: center;
+                 margin-bottom: 1cm;
+                 font-size: 16pt;
+                 color: #000 !important;
+                 border-bottom: 1px solid #ccc !important;
+                 padding-bottom: 0.5cm;
+             }
+
+             #wyniki h3 {
+                 font-size: 12pt;
+                 margin-top: 1cm;
+                 margin-bottom: 0.5cm;
+                 color: #000 !important;
+                 border-bottom: none;
+             }
+
+             #infoWiek, #infoTDB, #summaryStats {
+                 border: 1px solid #eee !important; /* Lighter border */
+                 background-color: #f9f9f9 !important; /* Very light background */
+                 padding: 0.5rem !important;
+                 margin-bottom: 0.5cm !important;
+                 font-size: 10pt;
+                 color: #000 !important;
+             }
+
+             #summaryStats ul {
+                 padding-left: 1em !important;
+                 list-style: disc !important;
+             }
+
+             .table-container {
+                 overflow: visible !important; /* Prevent scrollbars in print */
+             }
+
+             #tabelaBazy {
+                 font-size: 9pt;
+                 width: 100% !important;
+                 border-collapse: collapse !important;
+                 margin-top: 0.5cm;
+                 page-break-inside: auto; /* Allow table to break across pages */
+             }
+
+             #tabelaBazy tr {
+                 page-break-inside: avoid; /* Prevent breaking rows */
+                 page-break-after: auto;
+             }
+
+             #tabelaBazy th, #tabelaBazy td {
+                 padding: 0.4rem 0.5rem;
+                 border: 1px solid #bbb !important; /* Grey border for cells */
+                 color: #000 !important;
+             }
+
+             #tabelaBazy thead th, #tabelaBazy tfoot th {
+                 background-color: #eee !important; /* Light grey background for header/footer */
+                 font-weight: bold;
+             }
+              #tabelaBazy tbody tr:nth-child(even), #tabelaBazy tbody tr:nth-child(odd) {
+                  background-color: #fff !important; /* White background for tbody rows */
+              }
+             #tabelaBazy tbody tr:hover {
+                 background-color: #fff !important; /* No hover effect on print */
+             }
+
+
+             #tabelaBazy tfoot th:first-child {
+                 text-align: right;
+             }
+
+             #tabelaBazy tfoot th:last-child {
+                 text-align: center;
+                 font-weight: bold;
+             }
+
+             /* Hide modal if open during print */
+             .modal {
+                 display: none !important;
+             }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Nagłówek -->
-        <header class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold text-blue-800 mb-3">
-                <i class="fas fa-calculator mr-2"></i> Kalkulator Bazy Kaskadowej
-            </h1>
-            <p class="text-gray-600 text-lg">Narzędzie do obliczania dawki insuliny bazowej w cukrzycy</p>
-            <div class="mt-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded">
-                <p class="font-medium"><i class="fas fa-info-circle mr-2"></i>Kalkulator pomaga określić właściwą dawkę insuliny bazowej na podstawie Twoich parametrów</p>
+<body>
+
+    <div class="container">
+        <div class="theme-switch-wrapper print-hide">
+            <span id="theme-label">Jasny</span>
+            <label class="theme-switch" for="darkModeToggle">
+                <input type="checkbox" id="darkModeToggle" aria-label="Przełącz tryb ciemny/jasny">
+                <span class="slider round"></span>
+            </label>
+            <span>Ciemny</span>
+        </div>
+
+        <button id="helpButton" class="btn-secondary print-hide" style="position: absolute; top: 1rem; left: 1.5rem; padding: 0.5rem 1rem; z-index: 10;">Pomoc / FAQ</button>
+
+        <div class="card">
+            <h1>Expert Kalkulator Bazy Kaskadowej</h1>
+            <p class="subtitle">Wprowadź dane i dostosuj parametry, aby wyliczyć sugerowany profil bazy.</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tdi">
+                        TDI [j]
+                        <span class="tooltip" tabindex="0" aria-label="Pomoc: Całkowita Dobowa Dawka Insuliny">? <span class="tooltiptext">Całkowita Dobowa Dawka Insuliny (suma bazy i bolusów) w jednostkach.</span></span>
+                    </label>
+                    <input type="number" id="tdi" step="0.1" placeholder="np. 15.5" aria-describedby="tdi-error" aria-invalid="false">
+                    <div id="tdi-error" class="error-message" role="alert" aria-live="assertive"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="rokUrodzenia">
+                        Rok urodzenia
+                        <span class="tooltip" tabindex="0" aria-label="Pomoc: Rok urodzenia">?<span class="tooltiptext">Rok urodzenia pacjenta, np. 2013.</span></span>
+                    </label>
+                    <input type="number" id="rokUrodzenia" placeholder="np. 2013" aria-describedby="rokUrodzenia-error" aria-invalid="false">
+                    <div id="rokUrodzenia-error" class="error-message" role="alert" aria-live="assertive"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="procentBazy">
+                        Procent Bazy z TDI (%)
+                        <span class="tooltip" tabindex="0" aria-label="Pomoc: Procent Bazy z TDI">?<span class="tooltiptext">Jaki procent TDI ma stanowić Całkowita Dobowa Baza (TDB)? Zazwyczaj 30-50%.</span></span>
+                    </label>
+                    <input type="number" id="procentBazy" value="32" min="10" max="70" step="1" aria-describedby="procentBazy-error" aria-invalid="false">
+                    <div id="procentBazy-error" class="error-message" role="alert" aria-live="assertive"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pumpStep">
+                        Skok pompy [j/h]
+                        <span class="tooltip" tabindex="0" aria-label="Pomoc: Skok pompy">?<span class="tooltiptext">Minimalna zmiana dawki godzinowej możliwa do ustawienia w Twojej pompie insulinowej.</span></span>
+                    </label>
+                    <select id="pumpStep">
+                        <option value="0.01">0.01</option>
+                        <option value="0.025">0.025</option>
+                        <option value="0.05">0.05</option>
+                        <option value="0.1">0.1</option>
+                    </select>
+                     <div id="pumpStep-error" class="error-message"></div></div>
+
+                <div class="form-group full-width">
+                     <label for="profileSelect">
+                        Wybór profilu
+                        <span class="tooltip" tabindex="0" aria-label="Pomoc: Wybór profilu">?<span class="tooltiptext">Wybierz "Auto", aby profil został dobrany wg wieku, lub wybierz konkretny profil ręcznie.</span></span>
+                    </label>
+                    <select id="profileSelect">
+                        <option value="auto" selected>Auto (wg wieku)</option>
+                        <option value="1-5">Profil 1-5 lat</option>
+                        <option value="6-11">Profil 6-11 lat</option>
+                        <option value="12-18">Profil 12-18 lat</option>
+                        <option value="18+">Profil 18+ </option>
+                    </select>
+                     <div id="profileSelect-error" class="error-message"></div></div>
             </div>
-        </header>
 
-        <!-- Formularz -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
-            <div class="p-6 md:p-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                    <i class="fas fa-user-circle mr-2 text-blue-600"></i> Twoje dane
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Waga -->
-                    <div>
-                        <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-weight mr-1"></i> Waga (kg)
-                        </label>
-                        <div class="relative">
-                            <input type="number" id="weight" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 70" min="30" max="200">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span class="text-gray-500">kg</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Wzrost -->
-                    <div>
-                        <label for="height" class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-ruler-vertical mr-1"></i> Wzrost (cm)
-                        </label>
-                        <div class="relative">
-                            <input type="number" id="height" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 175" min="100" max="250">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span class="text-gray-500">cm</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Wiek -->
-                    <div>
-                        <label for="age" class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-birthday-cake mr-1"></i> Wiek (lata)
-                        </label>
-                        <div class="relative">
-                            <input type="number" id="age" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 45" min="1" max="120">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span class="text-gray-500">lat</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Płeć -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-venus-mars mr-1"></i> Płeć
-                        </label>
-                        <div class="flex space-x-4">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="gender" value="male" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
-                                <span class="ml-2 text-gray-700">Mężczyzna</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="gender" value="female" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-gray-700">Kobieta</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <!-- Aktywność fizyczna -->
-                    <div class="md:col-span-2">
-                        <label for="activity" class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-running mr-1"></i> Poziom aktywności fizycznej
-                        </label>
-                        <select id="activity" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="1.2">Siedzący tryb życia (mało lub brak aktywności)</option>
-                            <option value="1.375">Lekka aktywność (1-3 dni w tygodniu)</option>
-                            <option value="1.55" selected>Umiarkowana aktywność (3-5 dni w tygodniu)</option>
-                            <option value="1.725">Wysoka aktywność (6-7 dni w tygodniu)</option>
-                            <option value="1.9">Bardzo wysoka aktywność (ciężkie treningi codziennie)</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Obecna dawka insuliny -->
-                    <div class="md:col-span-2">
-                        <label for="currentDose" class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-syringe mr-1"></i> Obecna dawka insuliny bazowej (j.m./dobę)
-                        </label>
-                        <div class="relative">
-                            <input type="number" id="currentDose" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 20" min="0" max="100" step="0.5">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span class="text-gray-500">j.m.</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="confirmConsultation" required aria-describedby="confirmConsultation-error" aria-invalid="false">
+                <label for="confirmConsultation">Rozumiem, że to tylko sugestia i wyniki skonsultuję z lekarzem.</label>
+                <div id="confirmConsultation-error" class="error-message" role="alert" aria-live="assertive"></div>
+            </div>
 
-                    <!-- Typ pompy -->
-                    <div class="md:col-span-2">
-                        <label for="pumpType" class="block text-sm font-medium text-gray-700 mb-1">
-                            <i class="fas fa-pump-medical mr-1"></i> Typ pompy insulinowej
-                        </label>
-                        <select id="pumpType" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="standard">Standardowa (stała dawka)</option>
-                            <option value="custom" selected>Niestandardowa (zmienna dawka)</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- Przycisk obliczania -->
-                <div class="mt-8 text-center">
-                    <button id="calculateBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300 transform hover:scale-105 glow-effect">
-                        <i class="fas fa-calculator mr-2"></i> Oblicz dawkę
-                    </button>
-                </div>
+            <div id="calculationStatus" aria-live="polite" aria-busy="false"></div>
+
+            <div class="button-container print-hide">
+                <button id="calculateButton" class="btn-primary">Oblicz Bazę</button>
+                <button id="clearButton" class="btn-secondary">Wyczyść Dane</button>
             </div>
         </div>
-        
-        <!-- Wyniki -->
-        <div id="results" class="hidden">
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
-                <div class="p-6 md:p-8">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-chart-line mr-2 text-blue-600"></i> Wyniki obliczeń
-                    </h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <!-- Zalecana dawka -->
-                        <div class="result-card p-5 rounded-lg">
-                            <h3 class="font-medium text-gray-700 mb-2">
-                                <i class="fas fa-syringe mr-2 text-blue-500"></i> Zalecana dawka bazowa
-                            </h3>
-                            <p class="text-3xl font-bold text-blue-600" id="recommendedDose">--</p>
-                            <p class="text-sm text-gray-500 mt-1">jednostek na dobę</p>
-                        </div>
-                        
-                        <!-- Różnica -->
-                        <div class="result-card p-5 rounded-lg">
-                            <h3 class="font-medium text-gray-700 mb-2">
-                                <i class="fas fa-exchange-alt mr-2 text-blue-500"></i> Różnica względem obecnej dawki
-                            </h3>
-                            <p class="text-3xl font-bold" id="doseDifference">--</p>
-                            <p class="text-sm text-gray-500 mt-1" id="differenceText"></p>
-                        </div>
-                    </div>
 
-                    <!-- Rozkład godzinowy -->
-                    <div class="mb-8" id="hourlyDistribution">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-clock mr-2 text-blue-500"></i> Sugerowany rozkład godzinowy dawki
-                        </h3>
-                        
-                        <div class="mb-4">
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">Całkowita dawka: <span id="totalDoseDisplay">0</span> j.m.</span>
-                                <span class="text-sm font-medium text-gray-700">Suma godzinowa: <span id="hourlySum">0</span> j.m.</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="doseProgress"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="hourlyRatesContainer">
-                            <!-- Hourly rates will be inserted here by JavaScript -->
-                        </div>
-                    </div>
-                    
-                    <!-- Wskazówki -->
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-6">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-yellow-800">Ważna informacja</h3>
-                                <div class="mt-2 text-sm text-yellow-700">
-                                    <p>Wynik kalkulatora ma charakter informacyjny i nie zastępuje konsultacji z lekarzem. Każda modyfikacja dawki insuliny powinna być konsultowana z diabetologiem.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sugestia dostosowania -->
-                    <div id="adjustmentSuggestion" class="hidden">
-                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-lightbulb text-blue-400"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="text-sm font-medium text-blue-800">Sugestia dostosowania dawki</h3>
-                                    <div class="mt-2 text-sm text-blue-700">
-                                        <p id="suggestionText"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div id="wyniki" class="card">
+            <h2>Wyniki Obliczeń</h2>
+            <div id="alertBox" class="alert" role="alert" aria-live="assertive"></div>
+            <p id="infoWiek"></p>
+            <p id="infoTDB"></p>
+            <div id="summaryStats"></div>
+
+            <div class="table-container">
+                <table id="tabelaBazy" aria-live="polite">
+                    <thead>
+                        <tr>
+                            <th>Godzina</th>
+                            <th>Sugerowana Baza [j/h]</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Suma Godzinowa:</th>
+                            <th id="sumaBazy">0.000</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <h3 class="print-hide">Wykres Profilu Bazy</h3>
+            <div id="chartContainer" class="print-hide">
+                <canvas id="basalChart"></canvas>
+            </div>
+
+            <div class="button-container print-hide">
+                <button class="btn-secondary" id="exportButton" disabled>Eksportuj do CSV</button>
+                <button class="btn-secondary" id="printButton" disabled>Drukuj Wyniki</button>
             </div>
         </div>
-        
-        <!-- Informacje dodatkowe -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="p-6 md:p-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                    <i class="fas fa-info-circle mr-2 text-blue-600"></i> O kalkulatorze bazy kaskadowej
-                </h2>
-                
-                <div class="prose prose-blue max-w-none">
-                    <p class="text-gray-700 mb-4">
-                        Kalkulator bazy kaskadowej pomaga w określeniu właściwej dawki insuliny bazowej dla osób z cukrzycą typu 1 i typu 2. Algorytm uwzględnia indywidualne parametry pacjenta, takie jak waga, wzrost, wiek, płeć i poziom aktywności fizycznej.
-                    </p>
-                    
-                    <h3 class="text-lg font-medium text-gray-800 mt-6 mb-3">Jak działa kalkulator?</h3>
-                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
-                        <li>Oblicza podstawowe zapotrzebowanie na insulinę na podstawie masy ciała</li>
-                        <li>Uwzględnia współczynniki korygujące dla wieku i płci</li>
-                        <li>Dostosowuje dawkę do poziomu aktywności fizycznej</li>
-                        <li>Porównuje wynik z obecną dawką i sugeruje ewentualne modyfikacje</li>
-                        <li>Generuje szczegółowy rozkład godzinowy dawki dla pompy insulinowej</li>
-                    </ul>
-                    
-                    <div class="mt-6 bg-green-50 border-l-4 border-green-400 p-4 rounded">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-heartbeat text-green-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-green-800">Pamiętaj o regularnych badaniach</h3>
-                                <div class="mt-2 text-sm text-green-700">
-                                    <p>Regularne kontrole poziomu glukozy we krwi i hemoglobiny glikowanej (HbA1c) są niezbędne dla prawidłowego leczenia cukrzycy.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Stopka -->
-        <footer class="mt-12 text-center text-gray-500 text-sm">
-            <p>© 2023 Kalkulator Bazy Kaskadowej dla Cukrzyków | Narzędzie informacyjne | Konsultuj zmiany dawki z lekarzem</p>
-        </footer>
     </div>
 
+    <div id="helpModal" class="modal print-hide">
+        <div class="modal-content" role="dialog" aria-labelledby="helpModalTitle" aria-modal="true">
+            <span id="closeModalButton" class="close-button" aria-label="Zamknij pomoc" tabindex="0">&times;</span>
+            <h2 id="helpModalTitle">Pomoc i Informacje</h2>
+            <h3>Jak działa kalkulator?</h3>
+            <p>Kalkulator szacuje godzinowy rozkład bazowej dawki insuliny (tzw. bazy kaskadowej) na podstawie Twojej całkowitej dobowej dawki insuliny (TDI) oraz wybranego profilu procentowego. Profil procentowy określa, jaka część dobowej bazy powinna być podana w każdej godzinie.</p>
+            <h3>Definicje terminów</h3>
+            <ul>
+                <li><strong>TDI (Całkowita Dobowa Dawka Insuliny):</strong> Suma całej insuliny (bazowej i doposiłkowej/korekcyjnej) podanej w ciągu doby (średnia z kilku dni).</li>
+                <li><strong>TDB (Całkowita Dobowa Baza):</strong> Ilość insuliny bazowej potrzebna w ciągu całej doby. Kalkulator szacuje ją jako określony procent TDI (możesz to zmienić w formularzu).</li>
+                <li><strong>Procent Bazy z TDI:</strong> Stosunek TDB do TDI, wyrażony w procentach. Zależy od wielu czynników, typowo 30-50%.</li>
+                <li><strong>Skok pompy:</strong> Najmniejsza możliwa zmiana dawki godzinowej w Twojej pompie (np. 0.01, 0.025, 0.05 j/h). Kalkulator zaokrągla wyniki do wybranego skoku.</li>
+                <li><strong>Profil Procentowy:</strong> Wzorzec pokazujący, jaki procent TDB powinien być podany w każdej godzinie doby. Profile mogą różnić się w zależności od wieku, trybu życia itp.</li>
+            </ul>
+            <h3>Interpretacja wyników</h3>
+            <p>Wyniki są jedynie <strong>sugestią</strong> i punktem wyjścia do dyskusji z Twoim lekarzem diabetologiem. Nie zastępują profesjonalnej porady medycznej. Wykres i tabela pokazują proponowany rozkład bazy w ciągu doby.</p>
+            <h3>Ważne Ostrzeżenie</h3>
+            <p><strong>Każda zmiana w dawkowaniu insuliny lub ustawieniach pompy MUSI być skonsultowana z lekarzem prowadzącym lub wykwalifikowanym edukatorem diabetologicznym.</strong> Samodzielne modyfikacje mogą prowadzić do niebezpiecznych wahań poziomu cukru we krwi (hipoglikemii lub hiperglikemii). Ten kalkulator jest narzędziem pomocniczym, a nie zastępstwem profesjonalnej opieki medycznej.</p>
+            <h3>Przydatne Linki</h3>
+            <ul>
+                <li><a href="https://diabetyk.org.pl/" target="_blank" rel="noopener noreferrer">Portal Diabetyk.org.pl</a></li>
+                <li><a href="https://pacjent.gov.pl/choroba/cukrzyca" target="_blank" rel="noopener noreferrer">Cukrzyca - Pacjent.gov.pl</a></li>
+                <li><a href="https://www.diabetes.org/" target="_blank" rel="noopener noreferrer">American Diabetes Association (ENG)</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        Pamiętaj: Ten kalkulator jest narzędziem pomocniczym. Zawsze konsultuj dawkowanie insuliny z lekarzem.
+    </footer>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calculateBtn = document.getElementById('calculateBtn');
-            const resultsSection = document.getElementById('results');
-            const adjustmentSuggestion = document.getElementById('adjustmentSuggestion');
-            const hourlyRatesContainer = document.getElementById('hourlyRatesContainer');
-            const totalDoseDisplay = document.getElementById('totalDoseDisplay');
-            const hourlySumDisplay = document.getElementById('hourlySum');
-            const doseProgress = document.getElementById('doseProgress');
-            const pumpTypeSelect = document.getElementById('pumpType');
+        // --- Application Object ---
+        const BasalCalculatorApp = {
+            config: {
+                lsKey: 'basalCalculatorInputs_v4_button', // New key for button version
+                lsThemeKey: 'basalCalculatorTheme',
+                // Profile data needs to be valid JSON-like structure
+                  profileData: {
+                    '1-5':  [3.96,3.61,3.44,3.71,3.76,3.85,4.15,4.05,3.76,3.54,3.15,2.83,2.85,3.21,3.61,3.95,4.43,4.95,5.11,5.51,5.81,6.14,5.51,5.11],
+                    '6-11': [4.21,4.25,4.41,4.61,4.91,5.07,5.01,4.47,3.88,3.33,3.11,2.97,2.97,3.08,3.35,3.93,4.52,4.76,4.69,4.63,4.61,4.47,4.45,4.31],
+                    '12-18':[3.46,3.81,4.31,4.95,5.59,6.07,5.89,5.11,4.31,3.78,3.55,3.39,3.39,3.39,3.64,3.96,4.53,4.58,4.51,4.01,3.69,3.39,3.35,3.34],
+                    '18+':  [3.46,3.81,4.31,4.95,5.59,6.07,5.89,5.11,4.31,3.78,3.55,3.39,3.39,3.39,3.64,3.96,4.53,4.58,4.51,4.01,3.69,3.39,3.35,3.34]
+                  }
+            },
+            state: {
+                currentHourlyRates: [],
+                chartInstance: null,
+                isCalculating: false,
+                currentYear: new Date().getFullYear()
+            },
+            dom: {
+                tdiInput: null, yearInput: null, basalPercentInput: null, pumpStepSelect: null, profileSelect: null, consentCheckbox: null, resultsCard: null, alertBox: null, resultsTbody: null, sumTh: null, ageInfoP: null, tdbInfoP: null, summaryDiv: null, chartCanvas: null, exportButton: null, printButton: null, statusDiv: null, darkModeToggle: null, helpModal: null, helpButton: null, closeModalButton: null, clearButton: null, themeLabel: null, calculateButton: null // Added calculateButton
+            },
 
-            // Predefined hourly patterns for different scenarios
-            const hourlyPatterns = {
-                standard: Array(24).fill(1), // Equal distribution
-                custom: [
-                    0.9, 0.9, 0.8, 0.8, 0.7, 0.7, // Night (12am-6am) - lower dose
-                    1.0, 1.1, 1.2, 1.3, 1.2, 1.1, // Morning (6am-12pm) - higher dose
-                    1.0, 1.0, 0.9, 0.9, 0.8, 0.8, // Afternoon (12pm-6pm)
-                    0.9, 1.0, 1.1, 1.0, 0.9, 0.9  // Evening (6pm-12am)
-                ]
-            };
+            // --- Initialization ---
+            init() {
+                this.cacheDomElements();
+                if (!this.checkRequiredElements()) return;
+                this.loadThemePreference();
+                this.loadInputsFromLocalStorage();
+                this.attachListeners();
+                // Optional: Trigger calculation if valid data is loaded from LS and user wants this behavior
+                // this.tryInitialCalculation(); // Uncomment if needed
+            },
 
-            calculateBtn.addEventListener('click', function() {
-                // Pobieranie wartości z formularza
-                const weight = parseFloat(document.getElementById('weight').value);
-                const height = parseFloat(document.getElementById('height').value);
-                const age = parseInt(document.getElementById('age').value);
-                const gender = document.querySelector('input[name="gender"]:checked').value;
-                const activityLevel = parseFloat(document.getElementById('activity').value);
-                const currentDose = parseFloat(document.getElementById('currentDose').value);
-                const pumpType = pumpTypeSelect.value;
-                
-                // Walidacja danych
-                if (!weight || !height || !age || !currentDose) {
-                    alert('Proszę wypełnić wszystkie wymagane pola!');
-                    return;
-                }
-                
-                // Obliczanie BMI
-                const bmi = weight / Math.pow(height / 100, 2);
-                
-                // Obliczanie podstawowej dawki (0.2-0.5 j.m./kg masy ciała)
-                let baseDose;
-                if (bmi < 18.5) {
-                    baseDose = weight * 0.25; // Niedowaga
-                } else if (bmi >= 18.5 && bmi < 25) {
-                    baseDose = weight * 0.3; // Waga normalna
-                } else if (bmi >= 25 && bmi < 30) {
-                    baseDose = weight * 0.35; // Nadwaga
-                } else {
-                    baseDose = weight * 0.4; // Otyłość
-                }
-                
-                // Korekta dla wieku
-                if (age > 60) {
-                    baseDose *= 0.9; // Zmniejszenie dawki dla osób starszych
-                } else if (age < 18) {
-                    baseDose *= 1.1; // Zwiększenie dawki dla dzieci i młodzieży
-                }
-                
-                // Korekta dla płci
-                if (gender === 'female') {
-                    baseDose *= 0.95; // Nieznacznie mniejsza dawka dla kobiet
-                }
-                
-                // Korekta dla aktywności fizycznej
-                baseDose *= activityLevel;
-                
-                // Zaokrąglenie do 0.5 j.m.
-                const recommendedDose = Math.round(baseDose * 2) / 2;
-                
-                // Obliczanie różnicy
-                const difference = recommendedDose - currentDose;
-                const absDifference = Math.abs(difference);
-                
-                // Wyświetlanie wyników
-                document.getElementById('recommendedDose').textContent = recommendedDose;
-                totalDoseDisplay.textContent = recommendedDose;
+             checkRequiredElements() {
+                 const required = ['tdi', 'rokUrodzenia', 'procentBazy', 'pumpStep', 'profileSelect', 'confirmConsultation', 'wyniki', 'calculateButton', 'clearButton', 'exportButton', 'printButton', 'helpButton', 'helpModal', 'closeModalButton', 'darkModeToggle', 'theme-label', 'tabelaBazy', 'sumaBazy', 'infoWiek', 'infoTDB', 'summaryStats', 'basalChart', 'calculationStatus', 'alertBox']; // Added more elements for robustness
+                 let missing = [];
+                 for (const id of required) {
+                     if (!document.getElementById(id)) {
+                         missing.push(id);
+                     }
+                 }
+                 if (missing.length > 0) {
+                     console.error(`Krytyczny błąd: Nie znaleziono elementów DOM o ID: "${missing.join(', ')}".`);
+                     document.body.innerHTML = `<p style="color:red; padding:2em;">Błąd krytyczny: Nie można zainicjować kalkulatora. Brak elementów: ${missing.join(', ')}</p>`;
+                     return false;
+                 }
+                 // Check table body separately if needed
+                 this.dom.resultsTbody = document.querySelector('#tabelaBazy tbody');
+                 if (!this.dom.resultsTbody) {
+                      console.error(`Krytyczny błąd: Nie znaleziono elementu DOM: tbody w #tabelaBazy.`);
+                      document.body.innerHTML = `<p style="color:red; padding:2em;">Błąd krytyczny: Nie można zainicjować kalkulatora. Brak tbody w tabeli wyników.</p>`;
+                      return false;
+                 }
+                 return true;
+             },
+            cacheDomElements() {
+                this.dom.tdiInput = document.getElementById('tdi');
+                this.dom.yearInput = document.getElementById('rokUrodzenia');
+                this.dom.basalPercentInput = document.getElementById('procentBazy');
+                this.dom.pumpStepSelect = document.getElementById('pumpStep');
+                this.dom.profileSelect = document.getElementById('profileSelect');
+                this.dom.consentCheckbox = document.getElementById('confirmConsultation');
+                this.dom.resultsCard = document.getElementById('wyniki');
+                this.dom.alertBox = document.getElementById('alertBox');
+                this.dom.resultsTbody = document.querySelector('#tabelaBazy tbody'); // Already checked in checkRequiredElements
+                this.dom.sumTh = document.getElementById('sumaBazy');
+                this.dom.ageInfoP = document.getElementById('infoWiek');
+                this.dom.tdbInfoP = document.getElementById('infoTDB');
+                this.dom.summaryDiv = document.getElementById('summaryStats');
+                this.dom.chartCanvas = document.getElementById('basalChart');
+                this.dom.exportButton = document.getElementById('exportButton');
+                this.dom.printButton = document.getElementById('printButton');
+                this.dom.statusDiv = document.getElementById('calculationStatus');
+                this.dom.darkModeToggle = document.getElementById('darkModeToggle');
+                this.dom.helpModal = document.getElementById('helpModal');
+                this.dom.helpButton = document.getElementById('helpButton');
+                this.dom.closeModalButton = document.getElementById('closeModalButton');
+                this.dom.clearButton = document.getElementById('clearButton');
+                this.dom.themeLabel = document.getElementById('theme-label');
+                this.dom.calculateButton = document.getElementById('calculateButton'); // Added
+            },
 
-                const doseDifferenceElement = document.getElementById('doseDifference');
-                const differenceTextElement = document.getElementById('differenceText');
-                
-                if (difference > 0) {
-                    doseDifferenceElement.textContent = `+${difference.toFixed(1)}`;
-                    doseDifferenceElement.classList.remove('text-red-600', 'text-green-600');
-                    doseDifferenceElement.classList.add('text-red-600');
-                    differenceTextElement.textContent = `Obecna dawka może być za niska`;
-                } else if (difference < 0) {
-                    doseDifferenceElement.textContent = difference.toFixed(1);
-                    doseDifferenceElement.classList.remove('text-red-600', 'text-green-600');
-                    doseDifferenceElement.classList.add('text-green-600');
-                    differenceTextElement.textContent = `Obecna dawka może być za wysoka`;
-                } else {
-                    doseDifferenceElement.textContent = '0';
-                    doseDifferenceElement.classList.remove('text-red-600', 'text-green-600');
-                    doseDifferenceElement.classList.add('text-blue-600');
-                    differenceTextElement.textContent = `Obecna dawka jest optymalna`;
-                }
-                
-                // Generowanie sugestii
-                const suggestionTextElement = document.getElementById('suggestionText');
-                
-                if (absDifference >= 5) {
-                    suggestionTextElement.innerHTML = `Rozważ konsultację z lekarzem w celu dostosowania dawki. Sugerowana zmiana to <strong>${absDifference.toFixed(1)} j.m.</strong> na dobę.`;
-                    adjustmentSuggestion.classList.remove('hidden');
-                } else if (absDifference >= 2) {
-                    suggestionTextElement.innerHTML = `Możesz rozważyć stopniową zmianę dawki o <strong>${absDifference.toFixed(1)} j.m.</strong> na dobę, monitorując poziom glukozy.`;
-                    adjustmentSuggestion.classList.remove('hidden');
-                } else if (absDifference > 0) {
-                    suggestionTextElement.innerHTML = `Różnica jest niewielka (<strong>${absDifference.toFixed(1)} j.m.</strong>). Monitoruj poziom glukozy przed podjęciem decyzji o zmianie.`;
-                    adjustmentSuggestion.classList.remove('hidden');
-                } else {
-                    adjustmentSuggestion.classList.add('hidden');
-                }
+            attachListeners() {
+                // Listeners for inputs just to clear validation errors
+                const inputsToListen = [this.dom.tdiInput, this.dom.yearInput, this.dom.basalPercentInput, this.dom.consentCheckbox];
+                  inputsToListen.forEach(input => {
+                      if (input) {
+                          const eventType = (input.type === 'checkbox') ? 'change' : 'input';
+                          input.addEventListener(eventType, () => this.clearInputError(input.id));
+                      }
+                  });
+                  // Selects don't usually need error clearing on change unless specific validation is added
+                  // this.dom.pumpStepSelect?.addEventListener('change', () => this.clearInputError(this.dom.pumpStepSelect.id));
+                  // this.dom.profileSelect?.addEventListener('change', () => this.clearInputError(this.dom.profileSelect.id));
 
-                // Generate hourly rates
-                generateHourlyRates(recommendedDose, pumpType);
-                
-                // Pokazanie sekcji wyników
-                resultsSection.classList.remove('hidden');
-                
-                // Płynne przewinięcie do wyników
-                resultsSection.scrollIntoView({ behavior: 'smooth' });
-                
-                // Animacja przycisku
-                this.classList.add('animate-pulse');
-                setTimeout(() => {
-                    this.classList.remove('animate-pulse');
-                }, 2000);
-            });
 
-            // Generate hourly rates based on total dose and pattern
-            function generateHourlyRates(totalDose, pumpType) {
-                hourlyRatesContainer.innerHTML = '';
-                const pattern = hourlyPatterns[pumpType];
-                const sumPattern = pattern.reduce((a, b) => a + b, 0);
-                let hourlySum = 0;
-                
-                // Calculate each hour's dose
-                for (let hour = 0; hour < 24; hour++) {
-                    const hourDose = (totalDose * pattern[hour] / sumPattern).toFixed(2);
-                    hourlySum += parseFloat(hourDose);
-                    
-                    const hourElement = document.createElement('div');
-                    hourElement.className = 'hourly-rate bg-white p-3 rounded-lg border border-gray-200 text-center';
-                    hourElement.innerHTML = `
-                        <div class="text-sm font-medium text-gray-500">${formatHour(hour)}</div>
-                        <div class="text-xl font-bold text-blue-600 mt-1">${hourDose}</div>
-                        <div class="text-xs text-gray-500 mt-1">j.m.</div>
-                    `;
-                    hourlyRatesContainer.appendChild(hourElement);
-                }
-                
-                // Update sum and progress
-                hourlySumDisplay.textContent = hourlySum.toFixed(2);
-                const progressPercent = (hourlySum / totalDose) * 100;
-                doseProgress.style.width = `${progressPercent}%`;
-            }
-            
-            // Format hour to 24h format with leading zero
-            function formatHour(hour) {
-                return hour.toString().padStart(2, '0') + ':00';
-            }
-            
-            // Podświetlanie aktywnych pól
-            const inputs = document.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.classList.add('glow-effect');
+                // Attach listeners to buttons
+                this.dom.calculateButton?.addEventListener('click', this.calculateAndDisplay.bind(this)); // MAIN CHANGE HERE
+                this.dom.clearButton?.addEventListener('click', this.clearAllData.bind(this)); // Use a more descriptive name
+                this.dom.exportButton?.addEventListener('click', this.exportToCsv.bind(this));
+                this.dom.printButton?.addEventListener('click', this.printResults.bind(this));
+                this.dom.darkModeToggle?.addEventListener('change', this.toggleDarkMode.bind(this));
+                this.dom.helpButton?.addEventListener('click', this.openHelpModal.bind(this));
+                this.dom.closeModalButton?.addEventListener('click', this.closeHelpModal.bind(this));
+                // Add keyboard listener for modal close button
+                this.dom.closeModalButton?.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { // Allow Space or Enter key to close
+                         e.preventDefault(); // Prevent default scroll/action
+                         this.closeHelpModal();
+                    }
                 });
-                
-                input.addEventListener('blur', function() {
-                    this.classList.remove('glow-effect');
+
+                if (this.dom.helpModal) {
+                     // Close modal when clicking outside the content
+                     this.dom.helpModal.addEventListener('click', (event) => {
+                         if (event.target === this.dom.helpModal) {
+                              this.closeHelpModal();
+                         }
+                     });
+                     // Close modal with Escape key
+                     window.addEventListener('keydown', (event) => {
+                         if (event.key === 'Escape' && this.dom.helpModal.style.display === 'block') {
+                              this.closeHelpModal();
+                         }
+                     });
+                }
+
+                  // Add focus management for modal
+                  this.dom.helpButton?.addEventListener('click', () => {
+                      this.openHelpModal();
+                      // Use a small timeout to ensure modal is visible before trying to focus
+                       setTimeout(() => {
+                           this.dom.closeModalButton?.focus(); // Focus the close button when modal opens
+                       }, 10);
+                  });
+
+                  // Return focus to the help button when modal closes
+                   const returnFocusToHelp = () => {
+                       if (this.dom.helpButton) {
+                           this.dom.helpButton.focus();
+                       }
+                   };
+                   this.dom.closeModalButton?.addEventListener('click', returnFocusToHelp);
+                   this.dom.helpModal?.addEventListener('click', (event) => {
+                        if (event.target === this.dom.helpModal) {
+                            returnFocusToHelp();
+                        }
+                   });
+                   window.addEventListener('keydown', (event) => {
+                       if (event.key === 'Escape' && this.dom.helpModal.style.display === 'block') {
+                           returnFocusToHelp();
+                       }
+                   });
+            },
+
+            // --- Alert Functions ---
+            showAlert(message, type = 'danger') {
+                if (!this.dom.alertBox) return;
+                this.dom.alertBox.textContent = message;
+                this.dom.alertBox.className = `alert alert-${type}`; // Ensure only alert and type class
+                this.dom.alertBox.style.display = 'block';
+                this.dom.alertBox.setAttribute('role', type === 'danger' ? 'alert' : 'status');
+                  // Scroll into view only if it's not already visible or partially visible
+                  const alertRect = this.dom.alertBox.getBoundingClientRect();
+                  if (alertRect.top < 0 || alertRect.bottom > window.innerHeight) {
+                       this.dom.alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+            },
+             hideAlert() {
+                  if (!this.dom.alertBox) return;
+                  this.dom.alertBox.style.display = 'none';
+                  this.dom.alertBox.textContent = '';
+                  this.dom.alertBox.removeAttribute('role'); // Clean up role when hidden
+             },
+
+
+            // --- Main Calculation Flow (Triggered by Button) ---
+            calculateAndDisplay() {
+                if (this.state.isCalculating) return;
+                this.setLoadingState(true);
+                this.resetUIBeforeCalc(); // Clear previous alerts and errors
+
+                // Use requestAnimationFrame to allow spinner to render before blocking thread
+                requestAnimationFrame(() => {
+                    // Minimal timeout still useful for complex DOMs
+                    setTimeout(() => {
+                         try {
+                             const inputs = this.getInputs();
+                             const validationResult = this.validateInputs(inputs);
+                             this.updateInputValidationUI(validationResult.errors);
+
+                             if (!validationResult.isValid) {
+                                 this.hideResults(false); // Hide results section, keep validation errors visible
+                                 this.showAlert('Proszę poprawić błędy w formularzu.', 'danger');
+                                  // Focus the first invalid field for accessibility
+                                  const firstErrorId = Object.keys(validationResult.errors)[0];
+                                  if (firstErrorId) {
+                                      document.getElementById(firstErrorId)?.focus();
+                                  }
+                                 this.setLoadingState(false);
+                                 return; // Stop calculation
+                             }
+
+                             // If validation passes:
+                             const profileResult = this.getProfile(inputs);
+                             if (!profileResult) { // Error already shown in getProfile
+                                 this.hideResults(); // Hide results section fully
+                                 this.setLoadingState(false);
+                                 return;
+                             }
+
+                             const calculationResult = this.calculateRates(inputs.tdi, inputs.basalPercent, profileResult.profile, inputs.pumpStep);
+
+                             this.dom.resultsCard.style.display = 'block'; // Show results card
+                             this.updateResultsUI(calculationResult, profileResult, inputs); // Populate results
+                             this.updateChart(calculationResult.hourlyRates); // Draw chart
+
+                             const inputsToSave = { ...inputs };
+                              delete inputsToSave.consent; // Don't save consent state
+                             this.saveInputsToLocalStorage(inputsToSave);
+
+                         } catch (error) {
+                             console.error("Błąd podczas obliczeń:", error);
+                             this.showAlert("Wystąpił nieoczekiwany błąd podczas obliczeń.", "danger");
+                             this.hideResults(); // Hide results section on unexpected error
+                         } finally {
+                             this.setLoadingState(false); // Hide spinner regardless of outcome
+                         }
+                    }, 10); // Minimal delay
                 });
-            });
+            },
+
+             // --- UI State Management ---
+             // Hide results section and optionally clear validation errors
+              hideResults(clearValidation = true) {
+                  if(this.dom.resultsCard) this.dom.resultsCard.style.display = 'none';
+                  if(this.dom.exportButton) this.dom.exportButton.disabled = true;
+                  if(this.dom.printButton) this.dom.printButton.disabled = true;
+                  if(this.state.chartInstance) {
+                      this.state.chartInstance.destroy();
+                      this.state.chartInstance = null;
+                  }
+                  // Clear validation visuals only if requested
+                  if (clearValidation) {
+                      this.clearAllInputErrors(); // Use specific function for clarity
+                  }
+                   this.hideAlert(); // Always hide general alerts when hiding results
+
+                   // Clear result text fields to avoid showing stale data if results card is shown again
+                   if(this.dom.resultsTbody) this.dom.resultsTbody.innerHTML = '';
+                   if(this.dom.sumTh) this.dom.sumTh.textContent = '0.000';
+                   if(this.dom.ageInfoP) this.dom.ageInfoP.textContent = '';
+                   if(this.dom.tdbInfoP) this.dom.tdbInfoP.textContent = '';
+                   if(this.dom.summaryDiv) this.dom.summaryDiv.innerHTML = '';
+                   this.state.currentHourlyRates = []; // Clear stored rates
+              },
+
+              // Reset UI before starting a new calculation
+              resetUIBeforeCalc() {
+                   this.hideAlert(); // Hide previous calculation-related alerts
+                   this.clearAllInputErrors(); // Clear previous validation errors
+              },
+
+
+            // --- Input & Validation Functions ---
+            getInputs() {
+                 return {
+                     tdi: this.getElementValueSafe(this.dom.tdiInput, true, null),
+                     year: this.getElementValueSafe(this.dom.yearInput, true, null),
+                     basalPercent: this.getElementValueSafe(this.dom.basalPercentInput, true, 32), // Default value if empty
+                     pumpStep: this.getElementValueSafe(this.dom.pumpStepSelect, true, 0.025), // Default value if empty/invalid
+                     profileOverride: this.getElementValueSafe(this.dom.profileSelect, false, 'auto'), // Default value
+                     consent: this.dom.consentCheckbox?.checked || false
+                 };
+              },
+              getElementValueSafe(element, isNumber = true, defaultValue = null) {
+                   if (!element) return defaultValue;
+                   const value = element.value.trim();
+                    if (isNumber) {
+                       if (value === '') return defaultValue; // Return default if empty, allows default value logic
+                       const num = parseFloat(value.replace(',', '.')); // Allow comma as decimal separator
+                       return isNaN(num) ? defaultValue : num; // Return default if not a number
+                    }
+                    return value === '' ? defaultValue : value; // Return default if empty for strings too
+               },
+              validateInputs(inputs) {
+                   const errors = {};
+                   const currentYear = this.state.currentYear;
+                    const minYear = 1900; // Reasonable minimum year
+
+                   // TDI validation
+                  if (inputs.tdi === null) {
+                      errors['tdi'] = 'Wartość jest wymagana.';
+                  } else if (inputs.tdi <= 0) {
+                       errors['tdi'] = 'Wartość musi być większa od 0.';
+                   } else if (inputs.tdi > 500) { // Arbitrary high limit to catch obvious errors
+                        errors['tdi'] = 'Wartość wydaje się zbyt duża (> 500 j).'; // Warning style maybe?
+                   }
+
+                   // Year validation
+                   if (inputs.year === null) {
+                        errors['rokUrodzenia'] = 'Rok urodzenia jest wymagany.';
+                   } else if (!Number.isInteger(inputs.year) || inputs.year < minYear || inputs.year > currentYear) {
+                       errors['rokUrodzenia'] = `Proszę podać prawidłowy rok (liczba całkowita, ${minYear}-${currentYear}).`;
+                   }
+
+                   // Basal Percent validation
+                   if (inputs.basalPercent === null) {
+                       // This case might be covered by default value, but defensive check
+                       errors['procentBazy'] = 'Wartość jest wymagana.';
+                   } else if (inputs.basalPercent < 10 || inputs.basalPercent > 70) {
+                       errors['procentBazy'] = 'Wartość musi być między 10 a 70%.';
+                   }
+
+                   // Consent validation
+                   if (!inputs.consent) {
+                       errors['confirmConsultation'] = 'Zgoda jest wymagana do wykonania obliczeń.';
+                   }
+
+                    // Pump Step and Profile Select usually don't need validation as they are dropdowns with valid options,
+                    // unless the selected value is somehow invalid or missing from profileData (handled in getProfile).
+
+                   return { isValid: Object.keys(errors).length === 0, errors: errors };
+              },
+
+              // Clear error for a single input
+              clearInputError(inputId) {
+                  const inputElement = document.getElementById(inputId);
+                   if (inputElement) {
+                       inputElement.classList.remove('input-error');
+                       inputElement.removeAttribute('aria-invalid');
+                        // Remove reference to error message element for accessibility
+                       inputElement.removeAttribute('aria-describedby');
+                   }
+                   const errorElement = document.getElementById(`${inputId}-error`);
+                   if (errorElement) {
+                       errorElement.textContent = ''; // Clear the message text
+                   }
+              },
+
+              // Clear errors for all potentially validated inputs
+               clearAllInputErrors() {
+                   const errorFields = ['tdi', 'rokUrodzenia', 'procentBazy', 'confirmConsultation', 'pumpStep', 'profileSelect']; // Include selects just in case
+                   errorFields.forEach(id => this.clearInputError(id));
+                },
+
+
+              // Update UI based on validation errors
+              updateInputValidationUI(errors) {
+                    this.clearAllInputErrors(); // Start by clearing all previous errors
+
+                    for (const id in errors) {
+                        const inputElement = document.getElementById(id);
+                        if (inputElement) {
+                            inputElement.classList.add('input-error');
+                            inputElement.setAttribute('aria-invalid', 'true');
+                             // Set reference to error message element for accessibility
+                            const errorMsgId = `${id}-error`;
+                             let errorElement = document.getElementById(errorMsgId);
+                             // Create error element if it doesn't exist (though HTML has placeholders)
+                             if (!errorElement) {
+                                errorElement = document.createElement('div');
+                                errorElement.id = errorMsgId;
+                                errorElement.className = 'error-message'; // Apply error message style
+                                inputElement.parentNode.appendChild(errorElement);
+                             }
+                            errorElement.textContent = errors[id]; // Set the error message
+                            inputElement.setAttribute('aria-describedby', errorMsgId); // Link input to error message
+                        }
+                    }
+               },
+
+
+            // --- Calculation Functions ---
+            roundToStep(value, step) {
+                 if (step <= 0) return value; // Avoid division by zero or negative steps
+                 const epsilon = 1e-9; // Small value to counteract floating point inaccuracies
+                  // Add epsilon before division, then multiply by step
+                  // Using Math.round is crucial here
+                 return Math.round((value + epsilon) / step) * step;
+            },
+            getProfile(inputs) {
+                 const age = this.state.currentYear - inputs.year;
+                 let profileKey = inputs.profileOverride !== 'auto' ? inputs.profileOverride : null;
+                 let ageInfo = `Obliczony wiek: ${age} lat.`;
+                 let profileInfo = '';
+
+                  // Automatic profile selection based on age if not overridden
+                 if (!profileKey) {
+                     if (age < 1) profileKey = '1-5';      // Handle age < 1 by using 1-5 profile
+                     else if (age <= 5) profileKey = '1-5';
+                     else if (age <= 11) profileKey = '6-11';
+                     else if (age <= 17) profileKey = '12-18'; // Changed to 17 for consistency with 18+
+                     else profileKey = '18+'; // Age 18 and above
+
+                      profileInfo = ` Automatycznie wybrano profil: ${profileKey}${age < 1 ? ' (użyto profilu dla wieku 1-5 lat)' : ''}.`;
+                 } else {
+                     // Find the user-friendly name for the overridden profile key
+                      const selectedOption = this.dom.profileSelect.querySelector(`option[value="${profileKey}"]`);
+                      const profileName = selectedOption ? selectedOption.textContent : profileKey;
+                      profileInfo = ` Ręcznie wybrano profil: ${profileName}.`;
+                 }
+
+                 const profileData = this.config.profileData[profileKey];
+                  if (!profileData || !Array.isArray(profileData) || profileData.length !== 24) {
+                       console.error(`Błąd: Nieprawidłowe lub brakujące dane dla profilu '${profileKey}'.`);
+                       this.showAlert(`Błąd wewnętrzny: Nie można załadować danych dla profilu '${profileKey}'. Skontaktuj się z administratorem.`, 'danger');
+                       return null; // Indicate error
+                  }
+
+                 // Validate profile data sum (should be close to 100) - Optional but good practice
+                  const profileSum = profileData.reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0);
+                  if (Math.abs(profileSum - 100) > 0.1) { // Allow small tolerance for floating point sums
+                       console.warn(`Suma procentów dla profilu '${profileKey}' wynosi ${profileSum.toFixed(2)}%, oczekiwano ~100%.`);
+                       // Could show a warning alert here if needed, but console.warn is less intrusive.
+                  }
+
+
+                 return { age: age, profileKey: profileKey, profile: profileData, ageInfo: ageInfo, profileInfo: profileInfo };
+            },
+            calculateRates(tdi, basalPercent, profilePercentages, pumpStep) {
+                 const targetTDB = tdi * (basalPercent / 100); // Target Total Daily Basal
+                 let calculatedHourlyRates = [];
+                 let totalCalculatedBase = 0;
+
+                  if (!Array.isArray(profilePercentages) || profilePercentages.length !== 24) {
+                       throw new Error("Invalid profile data provided to calculateRates."); // Should be caught by getProfile
+                  }
+
+                 for (let i = 0; i < 24; i++) {
+                      const percentage = profilePercentages[i] || 0; // Default to 0 if missing/invalid
+                      const idealHourlyRate = targetTDB * (percentage / 100);
+                      const roundedHourlyRate = this.roundToStep(idealHourlyRate, pumpStep);
+
+                      calculatedHourlyRates.push(roundedHourlyRate);
+                      totalCalculatedBase += roundedHourlyRate;
+                 }
+
+                 this.state.currentHourlyRates = calculatedHourlyRates; // Store the result in state
+
+                 return {
+                      targetTDB: targetTDB,                    // The theoretical TDB based on TDI and percentage
+                      hourlyRates: calculatedHourlyRates,      // Array of 24 rounded hourly rates
+                      totalCalculatedBase: totalCalculatedBase // The actual sum of rounded hourly rates
+                 };
+            },
+
+            // --- UI Update Functions ---
+            setLoadingState(isLoading) {
+                 this.state.isCalculating = isLoading;
+                 if (this.dom.statusDiv) {
+                     this.dom.statusDiv.textContent = isLoading ? 'Obliczanie...' : '';
+                     this.dom.statusDiv.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+                     this.dom.statusDiv.style.visibility = isLoading ? 'visible' : 'hidden';
+                 }
+                 // Disable calculate button while calculating
+                 if(this.dom.calculateButton) {
+                     this.dom.calculateButton.disabled = isLoading;
+                 }
+                 // Disable other buttons while calculating to prevent conflicts
+                 if(this.dom.clearButton) this.dom.clearButton.disabled = isLoading;
+                 if(this.dom.exportButton) this.dom.exportButton.disabled = isLoading || (this.state.currentHourlyRates?.length === 0); // Keep export disabled if no data
+                 if(this.dom.printButton) this.dom.printButton.disabled = isLoading || (this.state.currentHourlyRates?.length === 0); // Keep print disabled if no data
+
+             },
+            updateResultsUI(results, profileResult, inputs) {
+                 if (!this.dom.resultsTbody || !this.dom.ageInfoP || !this.dom.tdbInfoP || !this.dom.sumTh || !this.dom.summaryDiv) {
+                       console.error("Błąd: Brak elementów DOM do aktualizacji wyników.");
+                       this.showAlert("Błąd wewnętrzny: Nie można wyświetlić wyników.", "danger");
+                       return;
+                 }
+                 // Clear previous table rows
+                 this.dom.resultsTbody.innerHTML = '';
+
+                 // Update info paragraphs
+                 this.dom.ageInfoP.textContent = profileResult.ageInfo + profileResult.profileInfo;
+                 this.dom.tdbInfoP.textContent = `Sugerowana całk. dobowa baza (${inputs.basalPercent}% TDI): ${results.targetTDB.toFixed(3)} j.`;
+
+                 let minRate = Infinity, maxRate = -Infinity;
+
+                 // Populate table and find min/max
+                 results.hourlyRates.forEach((rate, hour) => {
+                      const hourString = hour.toString().padStart(2, '0') + ':00';
+                      const row = this.dom.resultsTbody.insertRow();
+                      if (row) {
+                          const cellHour = row.insertCell();
+                          const cellRate = row.insertCell();
+                          cellHour.textContent = hourString;
+                          cellRate.textContent = rate.toFixed(3);
+                           // Add classes for styling min/max rows if desired
+                           // if (rate === minRate) row.classList.add('min-rate-row');
+                           // if (rate === maxRate) row.classList.add('max-rate-row');
+                      }
+                      if (rate < minRate) minRate = rate;
+                      if (rate > maxRate) maxRate = rate;
+                 });
+
+                 // Update table footer (sum)
+                 this.dom.sumTh.textContent = results.totalCalculatedBase.toFixed(3);
+
+                 // Update summary stats
+                 const averageRate = results.totalCalculatedBase > 0 ? results.totalCalculatedBase / 24 : 0;
+                 this.dom.summaryDiv.innerHTML = `<h3>Podsumowanie:</h3><ul>` +
+                                                `<li>Min. dawka godz.: <strong>${minRate === Infinity ? 'N/A' : minRate.toFixed(3)} j/h</strong></li>` +
+                                                `<li>Max. dawka godz.: <strong>${maxRate === -Infinity ? 'N/A' : maxRate.toFixed(3)} j/h</strong></li>` +
+                                                `<li>Średnia dawka godz.: <strong>${averageRate.toFixed(3)} j/h</strong></li>` +
+                                                `</ul>`;
+                 this.dom.summaryDiv.style.display = 'block';
+
+                 // Check for significant difference due to rounding and show warning if needed
+                  const difference = Math.abs(results.totalCalculatedBase - results.targetTDB);
+                  const pumpStep = inputs.pumpStep;
+                  // Show warning if difference is greater than the pumpStep, acknowledging rounding
+                  if (difference > pumpStep + 1e-9) { // Add epsilon for float comparison robustness
+                       // Show warning only if no danger alert is already shown
+                       if (!this.dom.alertBox?.classList.contains('alert-danger')) {
+                           this.showAlert(`Uwaga: Suma zaokrąglonych baz (${results.totalCalculatedBase.toFixed(3)} j) różni się od obliczonej docelowej TDB (${results.targetTDB.toFixed(3)} j) o ${difference.toFixed(3)} j. Różnica jest większa niż krok pompy (${pumpStep.toFixed(3)} j) i wynika z zaokrągleń w poszczególnych godzinach. Należy mieć to na uwadze ustawiając bazę w pompie.`, 'warning');
+                       }
+                  } else {
+                       // Hide warning if difference is acceptable and no danger alert is shown
+                        if (!this.dom.alertBox?.classList.contains('alert-danger') && this.dom.alertBox?.classList.contains('alert-warning')) {
+                           this.hideAlert();
+                        } else if (!this.dom.alertBox?.classList.contains('alert-danger')) {
+                            // If no alerts are needed, ensure alert box is hidden
+                            this.hideAlert();
+                        }
+                  }
+
+
+                 // Enable export/print buttons
+                 if (this.dom.exportButton) this.dom.exportButton.disabled = false;
+                 if (this.dom.printButton) this.dom.printButton.disabled = false;
+
+                  // Scroll to results section
+                  if (this.dom.resultsCard) {
+                       this.dom.resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+            },
+
+             updateChart(hourlyRates) {
+                  if (!this.dom.chartCanvas) return;
+                  const ctx = this.dom.chartCanvas.getContext('2d');
+                  if (!ctx) { console.error("Nie można uzyskać kontekstu 2D dla wykresu."); return; }
+
+                  const labels = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+                  const isDarkMode = document.body.classList.contains('dark-mode');
+                  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#10B981'; // Fallback color
+                   const primaryColorDark = getComputedStyle(document.documentElement).getPropertyValue('--primary-color-dark').trim() || '#059669'; // Fallback color
+                  const gridColor = isDarkMode ? 'rgba(156, 163, 175, 0.2)' : 'rgba(209, 213, 219, 0.5)';
+                  const textColor = isDarkMode ? 'rgba(243, 244, 246, 0.9)' : 'rgba(55, 65, 81, 0.9)';
+                  const tooltipBg = isDarkMode ? '#1f2937' : '#333'; // Darker tooltip in light mode too
+
+                  // Destroy previous chart instance if it exists
+                  if (this.state.chartInstance) {
+                      this.state.chartInstance.destroy();
+                      this.state.chartInstance = null; // Ensure it's reset
+                  }
+
+                  // Create new chart
+                  try {
+                       this.state.chartInstance = new Chart(ctx, {
+                           type: 'bar',
+                           data: {
+                               labels: labels,
+                               datasets: [{
+                                   label: 'Sugerowana Baza [j/h]',
+                                   data: hourlyRates,
+                                    backgroundColor: primaryColor + 'cc', // Add alpha transparency (80%)
+                                    borderColor: primaryColorDark,
+                                    borderWidth: 1,
+                                    borderRadius: 4,
+                                    barPercentage: 0.9, // Adjust bar width - slightly wider
+                                    categoryPercentage: 0.8 // Adjust space between bars
+                               }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false, // Allow chart to fill container height
+                                scales: {
+                                    y: {
+                                         beginAtZero: true,
+                                         title: { display: true, text: 'Dawka [j/h]', color: textColor, font: { weight: '500'} },
+                                         grid: { color: gridColor, drawBorder: false }, // Hide Y-axis border
+                                         ticks: { color: textColor }
+                                     },
+                                    x: {
+                                         title: { display: true, text: 'Godzina (24h)', color: textColor, font: { weight: '500'} }, // Added 24h hint
+                                         grid: { display: false }, // Hide vertical grid lines
+                                         ticks: { color: textColor }
+                                     }
+                                 },
+                                 plugins: {
+                                     legend: { display: false }, // Usually not needed for single dataset
+                                     tooltip: {
+                                         backgroundColor: tooltipBg,
+                                         titleColor: '#fff',
+                                         bodyColor: '#fff',
+                                         boxPadding: 4,
+                                         padding: 10,
+                                         callbacks: {
+                                             title: (tooltipItems) => tooltipItems[0].label + ':00 - ' + ((parseInt(tooltipItems[0].label) + 1) % 24).toString().padStart(2, '0') + ':00', // Handle 23:00 - 00:00 transition
+                                             label: (context) => ` Baza: ${context.parsed.y.toFixed(3)} j/h`
+                                          }
+                                      }
+                                  },
+                                 animation: {
+                                      duration: 500 // Add subtle animation
+                                 },
+                                 layout: {
+                                     padding: {
+                                         top: 10, bottom: 10 // Add a little padding to prevent labels/titles being cut off
+                                     }
+                                 }
+                             }
+                         });
+                  } catch (e) {
+                       console.error("Błąd podczas tworzenia wykresu:", e);
+                       this.showAlert("Nie można było wygenerować wykresu.", "warning");
+                       if (this.dom.chartCanvas.parentNode) {
+                            this.dom.chartCanvas.parentNode.innerHTML = '<p style="text-align: center; color: var(--text-color-light);">Wykres niedostępny.</p>';
+                       }
+                  }
+              },
+
+
+            // --- Dark Mode, Help Modal, Local Storage, Export, Print ---
+            toggleDarkMode() {
+                 if (!this.dom.darkModeToggle || !this.dom.themeLabel) return;
+                 const isDarkMode = this.dom.darkModeToggle.checked;
+                 document.body.classList.toggle('dark-mode', isDarkMode);
+                 localStorage.setItem(this.config.lsThemeKey, isDarkMode ? 'dark' : 'light');
+                 this.dom.themeLabel.textContent = isDarkMode ? 'Ciemny' : 'Jasny';
+                  // Redraw chart with updated colors if it exists and there are results
+                  if (this.state.chartInstance && this.state.currentHourlyRates.length > 0) {
+                      this.updateChart(this.state.currentHourlyRates);
+                  }
+             },
+             loadThemePreference() {
+                  const preferredTheme = localStorage.getItem(this.config.lsThemeKey);
+                  // Check for saved preference first, then system preference
+                  const wantsDark = preferredTheme === 'dark' || (preferredTheme === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  if (wantsDark) {
+                      if (this.dom.darkModeToggle) this.dom.darkModeToggle.checked = true;
+                      document.body.classList.add('dark-mode');
+                      if (this.dom.themeLabel) this.dom.themeLabel.textContent = 'Ciemny';
+                  } else {
+                       // Explicitly set to light mode if preference is light or no preference and system is light
+                      if (this.dom.darkModeToggle) this.dom.darkModeToggle.checked = false;
+                      document.body.classList.remove('dark-mode');
+                      if (this.dom.themeLabel) this.dom.themeLabel.textContent = 'Jasny';
+                   }
+              },
+            openHelpModal() { if (this.dom.helpModal) this.dom.helpModal.style.display = "block"; },
+            closeHelpModal() { if (this.dom.helpModal) this.dom.helpModal.style.display = "none"; },
+
+            saveInputsToLocalStorage(inputs) {
+                 try {
+                     // Ensure we don't save null/undefined where defaults exist in getInputs
+                     const inputsToSave = {
+                         tdi: inputs.tdi,
+                         year: inputs.year,
+                         basalPercent: inputs.basalPercent ?? 32, // Use default if somehow null
+                         pumpStep: inputs.pumpStep ?? 0.025,
+                         profileOverride: inputs.profileOverride ?? 'auto'
+                     };
+                     localStorage.setItem(this.config.lsKey, JSON.stringify(inputsToSave));
+                 } catch (e) {
+                     console.error("Błąd zapisu do LocalStorage:", e);
+                     // Optionally inform user, but maybe not critical
+                     // this.showAlert("Nie udało się zapisać ustawień.", "warning");
+                 }
+            },
+            loadInputsFromLocalStorage() {
+                 try {
+                     const savedInputs = localStorage.getItem(this.config.lsKey);
+                     if (savedInputs) {
+                         const inputs = JSON.parse(savedInputs);
+                          // Use defaults from getInputs if saved value is missing/null/undefined, but check element existence first
+                          if (this.dom.tdiInput) this.setInputValueSafe(this.dom.tdiInput, inputs.tdi);
+                          if (this.dom.yearInput) this.setInputValueSafe(this.dom.yearInput, inputs.year);
+                          // For fields with defaults, use the saved value if valid, otherwise the default from config
+                          if (this.dom.basalPercentInput) this.setInputValueSafe(this.dom.basalPercentInput, inputs.basalPercent ?? this.getInputs().basalPercent);
+                          if (this.dom.pumpStepSelect) this.setInputValueSafe(this.dom.pumpStepSelect, inputs.pumpStep ?? this.getInputs().pumpStep);
+                          if (this.dom.profileSelect) this.setInputValueSafe(this.dom.profileSelect, inputs.profileOverride ?? this.getInputs().profileOverride);
+                          // Consent is NOT loaded/saved intentionally
+                     } else {
+                          // Optionally set default values if nothing is saved or data is corrupted
+                          if (this.dom.basalPercentInput) this.setInputValueSafe(this.dom.basalPercentInput, 32);
+                          if (this.dom.pumpStepSelect) this.setInputValueSafe(this.dom.pumpStepSelect, 0.025);
+                          if (this.dom.profileSelect) this.setInputValueSafe(this.dom.profileSelect, 'auto');
+                     }
+                 } catch (e) {
+                     console.error("Błąd odczytu z LocalStorage:", e);
+                     localStorage.removeItem(this.config.lsKey); // Clear corrupted data
+                      this.showAlert("Nie udało się wczytać zapisanych danych. Wyczyść formularz lub spróbuj ponownie.", "warning");
+                 }
+            },
+            setInputValueSafe(element, value, defaultValue = '') {
+                 if (element) {
+                      // Check if the element is a select and the value is a valid option before setting
+                     if (element.tagName === 'SELECT') {
+                         const optionExists = Array.from(element.options).some(option => option.value == value); // Use == for potential type coercion
+                         element.value = optionExists ? value : defaultValue;
+                     } else {
+                         // Set value only if it's not null or undefined, otherwise set default
+                         element.value = (value !== null && value !== undefined) ? value : defaultValue;
+                     }
+                 }
+            },
+
+            // Clear form, local storage, and results
+            clearAllData() {
+                 try {
+                     localStorage.removeItem(this.config.lsKey); // Remove saved data first
+                      // Reset form fields to their initial/default state
+                     this.setInputValueSafe(this.dom.tdiInput, null, '');
+                     this.setInputValueSafe(this.dom.yearInput, null, '');
+                     this.setInputValueSafe(this.dom.basalPercentInput, 32); // Default value
+                     this.setInputValueSafe(this.dom.pumpStepSelect, 0.025); // Default value
+                     this.setInputValueSafe(this.dom.profileSelect, 'auto'); // Default value
+                     if (this.dom.consentCheckbox) this.dom.consentCheckbox.checked = false;
+
+                     this.hideResults(true); // Hide results section and clear any validation errors
+                      this.dom.tdiInput?.focus(); // Optional: focus the first field after clearing
+
+                 } catch (e) {
+                     console.error("Błąd podczas czyszczenia danych (LocalStorage):", e);
+                     this.showAlert("Nie udało się usunąć zapisanych ustawień.", "danger");
+                 }
+            },
+            exportToCsv() {
+                 if (!this.state.currentHourlyRates || this.state.currentHourlyRates.length !== 24) {
+                     this.showAlert("Brak danych do wyeksportowania. Najpierw oblicz wyniki.", "warning");
+                     return;
+                 }
+                  let csvContent = "Godzina,Sugerowana Baza [j/h]\n";
+                 this.state.currentHourlyRates.forEach((rate, i) => {
+                     // Format hour as HH:00
+                     const hourStr = `${i.toString().padStart(2, '0')}:00`;
+                     // Format rate, ensure dot as decimal separator for CSV consistency
+                     const rateStr = rate.toFixed(3).replace('.', ','); // Use comma as decimal separator for Excel compatibility in some locales
+                     csvContent += `${hourStr},${rateStr}\n`;
+                 });
+
+                 // Add summary info, ensuring proper CSV escaping for potential commas/quotes
+                  const escapeCsv = (str) => {
+                      // Ensure str is a string
+                       const s = String(str || '');
+                       // Escape double quotes by doubling them, and wrap the field in double quotes
+                       // if it contains commas, double quotes, or newlines.
+                       if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+                           return `"${s.replace(/"/g, '""')}"`;
+                       }
+                       return s;
+                  };
+
+                  const calculatedSum = this.dom.sumTh?.textContent?.replace('.', ',') || 'N/A'; // Format sum with comma
+                  const tdbInfo = this.dom.tdbInfoP?.textContent || '';
+                  const profileInfo = this.dom.ageInfoP?.textContent || '';
+                  const summaryEl = this.dom.summaryDiv;
+                  // Get text content, replace list items/newlines with comma separation
+                  const summaryText = summaryEl ? summaryEl.innerText.trim().replace(/\n+/g, ', ').replace(/•\s*/g, '') : ''; // Clean up list formatting
+
+
+                 csvContent += `\n${escapeCsv('Całkowita Suma Godzinowa:')},${escapeCsv(calculatedSum)}\n`;
+                 csvContent += `${escapeCsv('Informacje ogólne:')},${escapeCsv(tdbInfo + profileInfo)}\n`; // Combine info paragraphs
+                 csvContent += `${escapeCsv('Podsumowanie:')},${escapeCsv(summaryText)}\n`;
+
+
+                  // Create and download the file
+                 const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); // Add BOM for Excel compatibility
+                 const link = document.createElement("a");
+                  if (link.download !== undefined) { // Feature detection
+                      const url = URL.createObjectURL(blob);
+                      link.setAttribute("href", url);
+                      link.setAttribute("download", "baza_kaskadowa_wyniki.csv");
+                      link.style.visibility = 'hidden';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      URL.revokeObjectURL(url); // Clean up
+                  } else {
+                      this.showAlert("Eksport do CSV nie jest wspierany w tej przeglądarce.", "warning");
+                  }
+            },
+            printResults() {
+                 // Ensure results are visible before printing
+                 if (!this.dom.resultsCard || this.dom.resultsCard.style.display !== 'block') {
+                     this.showAlert("Najpierw oblicz wyniki, aby je wydrukować.", "warning");
+                     return;
+                 }
+                 // Use CSS @media print styles
+                 window.print();
+            }
+        };
+
+        // --- Initialize App ---
+        document.addEventListener('DOMContentLoaded', () => {
+            BasalCalculatorApp.init();
         });
+
     </script>
+
 </body>
 </html>
