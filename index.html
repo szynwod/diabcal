@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Bazy Kaskadowej dla Cukrzyków</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        .input-highlight {
+            transition: all 0.3s ease;
+        }
+        .input-highlight:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        .result-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #3b82f6;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .hourly-rate {
+            transition: all 0.3s ease;
+        }
+        .hourly-rate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Nagłówek -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-800 mb-3">
+                <i class="fas fa-calculator mr-2"></i> Kalkulator Bazy Kaskadowej
+            </h1>
+            <p class="text-gray-600 text-lg">Narzędzie do obliczania dawki insuliny bazowej w cukrzycy</p>
+            <div class="mt-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded">
+                <p class="font-medium"><i class="fas fa-info-circle mr-2"></i>Kalkulator pomaga określić właściwą dawkę insuliny bazowej na podstawie Twoich parametrów</p>
+            </div>
+        </header>
+
+        <!-- Formularz -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+            <div class="p-6 md:p-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-user-circle mr-2 text-blue-600"></i> Twoje dane
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Waga -->
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-weight mr-1"></i> Waga (kg)
+                        </label>
+                        <div class="relative">
+                            <input type="number" id="weight" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 70" min="30" max="200">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">kg</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Wzrost -->
+                    <div>
+                        <label for="height" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-ruler-vertical mr-1"></i> Wzrost (cm)
+                        </label>
+                        <div class="relative">
+                            <input type="number" id="height" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 175" min="100" max="250">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">cm</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Wiek -->
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-birthday-cake mr-1"></i> Wiek (lata)
+                        </label>
+                        <div class="relative">
+                            <input type="number" id="age" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 45" min="1" max="120">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">lat</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Płeć -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-venus-mars mr-1"></i> Płeć
+                        </label>
+                        <div class="flex space-x-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="gender" value="male" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                <span class="ml-2 text-gray-700">Mężczyzna</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="gender" value="female" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-gray-700">Kobieta</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Aktywność fizyczna -->
+                    <div class="md:col-span-2">
+                        <label for="activity" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-running mr-1"></i> Poziom aktywności fizycznej
+                        </label>
+                        <select id="activity" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="1.2">Siedzący tryb życia (mało lub brak aktywności)</option>
+                            <option value="1.375">Lekka aktywność (1-3 dni w tygodniu)</option>
+                            <option value="1.55" selected>Umiarkowana aktywność (3-5 dni w tygodniu)</option>
+                            <option value="1.725">Wysoka aktywność (6-7 dni w tygodniu)</option>
+                            <option value="1.9">Bardzo wysoka aktywność (ciężkie treningi codziennie)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Obecna dawka insuliny -->
+                    <div class="md:col-span-2">
+                        <label for="currentDose" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-syringe mr-1"></i> Obecna dawka insuliny bazowej (j.m./dobę)
+                        </label>
+                        <div class="relative">
+                            <input type="number" id="currentDose" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="np. 20" min="0" max="100" step="0.5">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">j.m.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Typ pompy -->
+                    <div class="md:col-span-2">
+                        <label for="pumpType" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-pump-medical mr-1"></i> Typ pompy insulinowej
+                        </label>
+                        <select id="pumpType" class="input-highlight w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="standard">Standardowa (stała dawka)</option>
+                            <option value="custom" selected>Niestandardowa (zmienna dawka)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Przycisk obliczania -->
+                <div class="mt-8 text-center">
+                    <button id="calculateBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300 transform hover:scale-105 glow-effect">
+                        <i class="fas fa-calculator mr-2"></i> Oblicz dawkę
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wyniki -->
+        <div id="results" class="hidden">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-line mr-2 text-blue-600"></i> Wyniki obliczeń
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Zalecana dawka -->
+                        <div class="result-card p-5 rounded-lg">
+                            <h3 class="font-medium text-gray-700 mb-2">
+                                <i class="fas fa-syringe mr-2 text-blue-500"></i> Zalecana dawka bazowa
+                            </h3>
+                            <p class="text-3xl font-bold text-blue-600" id="recommendedDose">--</p>
+                            <p class="text-sm text-gray-500 mt-1">jednostek na dobę</p>
+                        </div>
+                        
+                        <!-- Różnica -->
+                        <div class="result-card p-5 rounded-lg">
+                            <h3 class="font-medium text-gray-700 mb-2">
+                                <i class="fas fa-exchange-alt mr-2 text-blue-500"></i> Różnica względem obecnej dawki
+                            </h3>
+                            <p class="text-3xl font-bold" id="doseDifference">--</p>
+                            <p class="text-sm text-gray-500 mt-1" id="differenceText"></p>
+                        </div>
+                    </div>
+
+                    <!-- Rozkład godzinowy -->
+                    <div class="mb-8" id="hourlyDistribution">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-clock mr-2 text-blue-500"></i> Sugerowany rozkład godzinowy dawki
+                        </h3>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">Całkowita dawka: <span id="totalDoseDisplay">0</span> j.m.</span>
+                                <span class="text-sm font-medium text-gray-700">Suma godzinowa: <span id="hourlySum">0</span> j.m.</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="doseProgress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="hourlyRatesContainer">
+                            <!-- Hourly rates will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Wskazówki -->
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-yellow-800">Ważna informacja</h3>
+                                <div class="mt-2 text-sm text-yellow-700">
+                                    <p>Wynik kalkulatora ma charakter informacyjny i nie zastępuje konsultacji z lekarzem. Każda modyfikacja dawki insuliny powinna być konsultowana z diabetologiem.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sugestia dostosowania -->
+                    <div id="adjustmentSuggestion" class="hidden">
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-lightbulb text-blue-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-blue-800">Sugestia dostosowania dawki</h3>
+                                    <div class="mt-2 text-sm text-blue-700">
+                                        <p id="suggestionText"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informacje dodatkowe -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-blue-600"></i> O kalkulatorze bazy kaskadowej
+                </h2>
+                
+                <div class="prose prose-blue max-w-none">
+                    <p class="text-gray-700 mb-4">
+                        Kalkulator bazy kaskadowej pomaga w określeniu właściwej dawki insuliny bazowej dla osób z cukrzycą typu 1 i typu 2. Algorytm uwzględnia indywidualne parametry pacjenta, takie jak waga, wzrost, wiek, płeć i poziom aktywności fizycznej.
+                    </p>
+                    
+                    <h3 class="text-lg font-medium text-gray-800 mt-6 mb-3">Jak działa kalkulator?</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                        <li>Oblicza podstawowe zapotrzebowanie na insulinę na podstawie masy ciała</li>
+                        <li>Uwzględnia współczynniki korygujące dla wieku i płci</li>
+                        <li>Dostosowuje dawkę do poziomu aktywności fizycznej</li>
+                        <li>Porównuje wynik z obecną dawką i sugeruje ewentualne modyfikacje</li>
+                        <li>Generuje szczegółowy rozkład godzinowy dawki dla pompy insulinowej</li>
+                    </ul>
+                    
+                    <div class="mt-6 bg-green-50 border-l-4 border-green-400 p-4 rounded">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-heartbeat text-green-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-green-800">Pamiętaj o regularnych badaniach</h3>
+                                <div class="mt-2 text-sm text-green-700">
+                                    <p>Regularne kontrole poziomu glukozy we krwi i hemoglobiny glikowanej (HbA1c) są niezbędne dla prawidłowego leczenia cukrzycy.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stopka -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>© 2023 Kalkulator Bazy Kaskadowej dla Cukrzyków | Narzędzie informacyjne | Konsultuj zmiany dawki z lekarzem</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultsSection = document.getElementById('results');
+            const adjustmentSuggestion = document.getElementById('adjustmentSuggestion');
+            const hourlyRatesContainer = document.getElementById('hourlyRatesContainer');
+            const totalDoseDisplay = document.getElementById('totalDoseDisplay');
+            const hourlySumDisplay = document.getElementById('hourlySum');
+            const doseProgress = document.getElementById('doseProgress');
+            const pumpTypeSelect = document.getElementById('pumpType');
+
+            // Predefined hourly patterns for different scenarios
+            const hourlyPatterns = {
+                standard: Array(24).fill(1), // Equal distribution
+                custom: [
+                    0.9, 0.9, 0.8, 0.8, 0.7, 0.7, // Night (12am-6am) - lower dose
+                    1.0, 1.1, 1.2, 1.3, 1.2, 1.1, // Morning (6am-12pm) - higher dose
+                    1.0, 1.0, 0.9, 0.9, 0.8, 0.8, // Afternoon (12pm-6pm)
+                    0.9, 1.0, 1.1, 1.0, 0.9, 0.9  // Evening (6pm-12am)
+                ]
+            };
+
+            calculateBtn.addEventListener('click', function() {
+                // Pobieranie wartości z formularza
+                const weight = parseFloat(document.getElementById('weight').value);
+                const height = parseFloat(document.getElementById('height').value);
+                const age = parseInt(document.getElementById('age').value);
+                const gender = document.querySelector('input[name="gender"]:checked').value;
+                const activityLevel = parseFloat(document.getElementById('activity').value);
+                const currentDose = parseFloat(document.getElementById('currentDose').value);
+                const pumpType = pumpTypeSelect.value;
+                
+                // Walidacja danych
+                if (!weight || !height || !age || !currentDose) {
+                    alert('Proszę wypełnić wszystkie wymagane pola!');
+                    return;
+                }
+                
+                // Obliczanie BMI
+                const bmi = weight / Math.pow(height / 100, 2);
+                
+                // Obliczanie podstawowej dawki (0.2-0.5 j.m./kg masy ciała)
+                let baseDose;
+                if (bmi < 18.5) {
+                    baseDose = weight * 0.25; // Niedowaga
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    baseDose = weight * 0.3; // Waga normalna
+                } else if (bmi >= 25 && bmi < 30) {
+                    baseDose = weight * 0.35; // Nadwaga
+                } else {
+                    baseDose = weight * 0.4; // Otyłość
+                }
+                
+                // Korekta dla wieku
+                if (age > 60) {
+                    baseDose *= 0.9; // Zmniejszenie dawki dla osób starszych
+                } else if (age < 18) {
+                    baseDose *= 1.1; // Zwiększenie dawki dla dzieci i młodzieży
+                }
+                
+                // Korekta dla płci
+                if (gender === 'female') {
+                    baseDose *= 0.95; // Nieznacznie mniejsza dawka dla kobiet
+                }
+                
+                // Korekta dla aktywności fizycznej
+                baseDose *= activityLevel;
+                
+                // Zaokrąglenie do 0.5 j.m.
+                const recommendedDose = Math.round(baseDose * 2) / 2;
+                
+                // Obliczanie różnicy
+                const difference = recommendedDose - currentDose;
+                const absDifference = Math.abs(difference);
+                
+                // Wyświetlanie wyników
+                document.getElementById('recommendedDose').textContent = recommendedDose;
+                totalDoseDisplay.textContent = recommendedDose;
+
+                const doseDifferenceElement = document.getElementById('doseDifference');
+                const differenceTextElement = document.getElementById('differenceText');
+                
+                if (difference > 0) {
+                    doseDifferenceElement.textContent = `+${difference.toFixed(1)}`;
+                    doseDifferenceElement.classList.remove('text-red-600', 'text-green-600');
+                    doseDifferenceElement.classList.add('text-red-600');
+                    differenceTextElement.textContent = `Obecna dawka może być za niska`;
+                } else if (difference < 0) {
+                    doseDifferenceElement.textContent = difference.toFixed(1);
+                    doseDifferenceElement.classList.remove('text-red-600', 'text-green-600');
+                    doseDifferenceElement.classList.add('text-green-600');
+                    differenceTextElement.textContent = `Obecna dawka może być za wysoka`;
+                } else {
+                    doseDifferenceElement.textContent = '0';
+                    doseDifferenceElement.classList.remove('text-red-600', 'text-green-600');
+                    doseDifferenceElement.classList.add('text-blue-600');
+                    differenceTextElement.textContent = `Obecna dawka jest optymalna`;
+                }
+                
+                // Generowanie sugestii
+                const suggestionTextElement = document.getElementById('suggestionText');
+                
+                if (absDifference >= 5) {
+                    suggestionTextElement.innerHTML = `Rozważ konsultację z lekarzem w celu dostosowania dawki. Sugerowana zmiana to <strong>${absDifference.toFixed(1)} j.m.</strong> na dobę.`;
+                    adjustmentSuggestion.classList.remove('hidden');
+                } else if (absDifference >= 2) {
+                    suggestionTextElement.innerHTML = `Możesz rozważyć stopniową zmianę dawki o <strong>${absDifference.toFixed(1)} j.m.</strong> na dobę, monitorując poziom glukozy.`;
+                    adjustmentSuggestion.classList.remove('hidden');
+                } else if (absDifference > 0) {
+                    suggestionTextElement.innerHTML = `Różnica jest niewielka (<strong>${absDifference.toFixed(1)} j.m.</strong>). Monitoruj poziom glukozy przed podjęciem decyzji o zmianie.`;
+                    adjustmentSuggestion.classList.remove('hidden');
+                } else {
+                    adjustmentSuggestion.classList.add('hidden');
+                }
+
+                // Generate hourly rates
+                generateHourlyRates(recommendedDose, pumpType);
+                
+                // Pokazanie sekcji wyników
+                resultsSection.classList.remove('hidden');
+                
+                // Płynne przewinięcie do wyników
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Animacja przycisku
+                this.classList.add('animate-pulse');
+                setTimeout(() => {
+                    this.classList.remove('animate-pulse');
+                }, 2000);
+            });
+
+            // Generate hourly rates based on total dose and pattern
+            function generateHourlyRates(totalDose, pumpType) {
+                hourlyRatesContainer.innerHTML = '';
+                const pattern = hourlyPatterns[pumpType];
+                const sumPattern = pattern.reduce((a, b) => a + b, 0);
+                let hourlySum = 0;
+                
+                // Calculate each hour's dose
+                for (let hour = 0; hour < 24; hour++) {
+                    const hourDose = (totalDose * pattern[hour] / sumPattern).toFixed(2);
+                    hourlySum += parseFloat(hourDose);
+                    
+                    const hourElement = document.createElement('div');
+                    hourElement.className = 'hourly-rate bg-white p-3 rounded-lg border border-gray-200 text-center';
+                    hourElement.innerHTML = `
+                        <div class="text-sm font-medium text-gray-500">${formatHour(hour)}</div>
+                        <div class="text-xl font-bold text-blue-600 mt-1">${hourDose}</div>
+                        <div class="text-xs text-gray-500 mt-1">j.m.</div>
+                    `;
+                    hourlyRatesContainer.appendChild(hourElement);
+                }
+                
+                // Update sum and progress
+                hourlySumDisplay.textContent = hourlySum.toFixed(2);
+                const progressPercent = (hourlySum / totalDose) * 100;
+                doseProgress.style.width = `${progressPercent}%`;
+            }
+            
+            // Format hour to 24h format with leading zero
+            function formatHour(hour) {
+                return hour.toString().padStart(2, '0') + ':00';
+            }
+            
+            // Podświetlanie aktywnych pól
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.add('glow-effect');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.classList.remove('glow-effect');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
